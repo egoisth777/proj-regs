@@ -1,0 +1,9 @@
+[project]
+name = "harness-cli"
+version = "1.0.0"
+description = "MAS Harness enforcement hooks and setup tooling"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
