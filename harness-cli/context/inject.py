@@ -12,6 +12,11 @@ import sys
 from pathlib import Path
 from typing import Optional
 
+# Ensure harness-cli root is on sys.path for direct CLI execution
+_harness_cli_root = str(Path(__file__).parent.parent)
+if _harness_cli_root not in sys.path:
+    sys.path.insert(0, _harness_cli_root)
+
 from hooks.utils.config_loader import (
     find_project_root,
     load_harness_config,
