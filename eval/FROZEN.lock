@@ -1,0 +1,26 @@
+{
+  "version": "1.0",
+  "hashes": {
+    "criteria/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "criteria/o1-correctness.yaml": "93d1d272852c76aeb58c759fd4d52640bf89bc826812d47b0469927bac6e5f5c",
+    "criteria/o2-test-quality.yaml": "47dbe6821b9f7fced166b3cdd2bbadf71c4d95ea8e9717a163cbf83b8c2a768b",
+    "criteria/o3-code-quality.yaml": "bff0a14e0f81c4ed24f6b18f975dae5759a433dad8175bdb9c80bab43d9bdb44",
+    "criteria/o4-spec-fidelity.yaml": "d506379ec6bce7366a97d5e72f2296b808b0bb81c8e7ffe3286d5db823cff7bd",
+    "criteria/p1-spec-cascade.yaml": "f4928a36861a88d900bc74594656ce32bc3e50b3066bfb96e2c12b692a91f067",
+    "criteria/p2-role-boundary.yaml": "eb526f8bb4c215d5047810e5a26d0ba30aa7d265babf38d2b37dccda7eb5f3c9",
+    "criteria/p3-orchestration.yaml": "73c63fd3d761a4c7d8bd40b9079947e6b7518236d0cd8d33b47f2ef51d7ed0e1",
+    "criteria/p4-ssot-integrity.yaml": "adbc43a02483b0ae91ffce323675afa509f5ffa7149f651f25084237b7aa25a0",
+    "gates/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gates/frozen_lock.py": "8cd34ad05abff2334d2d943d243f10ecc2e4b10c8739a65c8adcf0f2cb7c8b3a",
+    "pools/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "pools/pool-e.md": "094ee79353dd2f49ceb97460e9f399123eed6eb9504042268058e9b351292412",
+    "pools/pool-r.md": "a6d985c09edfdbedb45c5ad1f1c35edd4760e0687042465b5095d256024d8bd0",
+    "pools/pool-t.md": "1a3b6b161bde4f0517846b84edb77b72bf046ac7d451f2f5407125ad65e1d6f1",
+    "pools/pool-v.md": "9cd3bfb55e27d850c56ff5e9eb9c6aefff352aceab0d3ce19138c9876d79b3a3",
+    "scripts/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tiers/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tiers/seed.yaml": "2c68df14662b42a9eba5772685f683bd1546abb91975ba8b473ee7e2294e6ab9",
+    "tiers/tier-2.yaml": "d0cf7228c50443837fe0e22c446114d3d9d04459a2a062cca90822c90b5ba690",
+    "tiers/tier-3.yaml": "fcd9468b8cf9b0fb21ebe945ff5fa00312c8b3046fd8b9cc66cf834100a98978"
+  }
+}
