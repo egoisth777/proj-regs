@@ -1,0 +1,10 @@
+[project]
+name = "orchestrator"
+version = "1.0.0"
+description = "Evolution loop orchestrator state machine"
+requires-python = ">=3.10"
+dependencies = ["pyyaml>=6.0"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
