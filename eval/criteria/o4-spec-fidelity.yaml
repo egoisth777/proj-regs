@@ -1,0 +1,27 @@
+category: o4-spec-fidelity
+description: "does the implementation match what the specs described?"
+questions:
+  - id: o4.1
+    text: "does every behavior in behavior_spec have at least one test?"
+    type: judgment
+    tier: seed
+  - id: o4.2
+    text: "does every test in test_spec have a corresponding test file?"
+    type: judgment
+    tier: tier-2
+  - id: o4.3
+    text: "are there zero implemented features that lack a spec?"
+    type: judgment
+    tier: tier-2
+  - id: o4.4
+    text: "do function/class names align with terminology used in the spec?"
+    type: judgment
+    tier: tier-3
+  - id: o4.5
+    text: "does the file structure match what was laid out in tasks.md?"
+    type: judgment
+    tier: tier-3
+  - id: o4.6
+    text: "are there zero todo/fixme markers left in delivered code?"
+    type: automated
+    tier: tier-3

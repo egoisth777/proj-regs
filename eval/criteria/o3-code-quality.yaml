@@ -1,0 +1,27 @@
+category: o3-code-quality
+description: "is the produced code clean and well-structured?"
+questions:
+  - id: o3.1
+    text: "does the code pass linting with zero errors?"
+    type: automated
+    tier: tier-2
+  - id: o3.2
+    text: "are there zero unused imports or dead variables?"
+    type: automated
+    tier: tier-2
+  - id: o3.3
+    text: "does the project follow its own stated conventions (naming, structure)?"
+    type: judgment
+    tier: tier-3
+  - id: o3.4
+    text: "is there no duplicated logic beyond a trivial threshold?"
+    type: judgment
+    tier: tier-3
+  - id: o3.5
+    text: "are dependencies properly declared (no implicit/missing deps)?"
+    type: automated
+    tier: tier-3
+  - id: o3.6
+    text: "does the project have a working entry point?"
+    type: automated
+    tier: tier-3

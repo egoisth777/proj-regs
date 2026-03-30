@@ -1,0 +1,27 @@
+category: p3-orchestration
+description: "did the orchestrator coordinate agents effectively?"
+questions:
+  - id: p3.1
+    text: "was every agent dispatched with an explicit task description?"
+    type: judgment
+    tier: tier-2
+  - id: p3.2
+    text: "were independent tasks dispatched in parallel?"
+    type: judgment
+    tier: tier-2
+  - id: p3.3
+    text: "were there zero redundant dispatches (same work assigned twice)?"
+    type: judgment
+    tier: tier-2
+  - id: p3.4
+    text: "did the orchestrator detect and resolve blockers without human intervention?"
+    type: judgment
+    tier: tier-3
+  - id: p3.5
+    text: "was the total agent count within the expected range for the project scope?"
+    type: judgment
+    tier: tier-3
+  - id: p3.6
+    text: "did no agent idle (dispatched but produce no output)?"
+    type: judgment
+    tier: tier-3

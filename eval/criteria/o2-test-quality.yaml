@@ -1,0 +1,27 @@
+category: o2-test-quality
+description: "are the produced tests meaningful and comprehensive?"
+questions:
+  - id: o2.1
+    text: "does line coverage exceed 70%?"
+    type: automated
+    tier: tier-2
+  - id: o2.2
+    text: "do tests cover both happy-path and error cases for each feature?"
+    type: judgment
+    tier: tier-2
+  - id: o2.3
+    text: "are there zero trivially passing tests (e.g., assert true)?"
+    type: judgment
+    tier: tier-3
+  - id: o2.4
+    text: "do tests fail when the corresponding implementation is removed?"
+    type: automated
+    tier: tier-3
+  - id: o2.5
+    text: "do test names clearly describe the behavior being tested?"
+    type: judgment
+    tier: tier-3
+  - id: o2.6
+    text: "are there no test files with zero assertions?"
+    type: automated
+    tier: tier-3
