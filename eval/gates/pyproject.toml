@@ -1,0 +1,10 @@
+[project]
+name = "eval-gates"
+version = "1.0.0"
+description = "Anti-gaming enforcement gates for the eval layer"
+requires-python = ">=3.10"
+dependencies = ["pyyaml>=6.0"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
