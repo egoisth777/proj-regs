@@ -25,7 +25,11 @@ def load_harness_config(project_root: str) -> Optional[dict]:
     if not config_path.exists():
         return None
     with open(config_path) as f:
-        return json.load(f)
+        config = json.load(f)
+    # support both old and new field names
+    if "cli_path" not in config and "harness_cli_path" in config:
+        config["cli_path"] = config["harness_cli_path"]
+    return config
 
 
 def load_context_map(registry_path: str) -> dict:

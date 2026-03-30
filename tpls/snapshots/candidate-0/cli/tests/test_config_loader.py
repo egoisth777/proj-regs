@@ -42,6 +42,41 @@ class TestLoadHarnessConfig:
         result = load_harness_config(str(tmp_path))
         assert result is None
 
+    def test_maps_old_harness_cli_path_to_cli_path(self, tmp_path):
+        """Old configs with harness_cli_path should get cli_path alias."""
+        config = {
+            "registry_path": "/path/to/registry",
+            "harness_cli_path": "/path/to/cli",
+            "version": "1.0.0"
+        }
+        (tmp_path / ".harness.json").write_text(json.dumps(config))
+        result = load_harness_config(str(tmp_path))
+        assert result["cli_path"] == "/path/to/cli"
+        assert result["harness_cli_path"] == "/path/to/cli"
+
+    def test_new_cli_path_not_overwritten(self, tmp_path):
+        """If cli_path already exists, harness_cli_path should not overwrite it."""
+        config = {
+            "registry_path": "/path/to/registry",
+            "cli_path": "/new/path",
+            "harness_cli_path": "/old/path",
+            "version": "1.0.0"
+        }
+        (tmp_path / ".harness.json").write_text(json.dumps(config))
+        result = load_harness_config(str(tmp_path))
+        assert result["cli_path"] == "/new/path"
+
+    def test_config_without_either_path_field(self, tmp_path):
+        """Config with neither field should work fine."""
+        config = {
+            "registry_path": "/path/to/registry",
+            "version": "1.0.0"
+        }
+        (tmp_path / ".harness.json").write_text(json.dumps(config))
+        result = load_harness_config(str(tmp_path))
+        assert "cli_path" not in result
+        assert "harness_cli_path" not in result
+
 
 class TestLoadContextMap:
     def test_loads_all_12_roles(self, tmp_path):
