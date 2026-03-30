@@ -3,6 +3,7 @@
   "phase": "prepare",
   "tier": "seed",
   "test_domain": null,
+  "consecutive_passes": 0,
   "candidates": [
     {
       "id": "candidate-0",
