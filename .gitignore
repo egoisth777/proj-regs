@@ -3,3 +3,9 @@ AGENTS.md
 .claude/
 .harness.json
 .worktrees/
+__pycache__/
+*.pyc
+dist/
+node_modules/
+.pytest_cache/
+tpls/snapshots/workspace/
