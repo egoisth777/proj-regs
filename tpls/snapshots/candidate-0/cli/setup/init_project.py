@@ -33,7 +33,7 @@ def validate_inputs(project: Path, registry: Path):
 def create_harness_json(project: Path, registry: Path):
     config = {
         "registry_path": str(registry.resolve()),
-        "harness_cli_path": str(HARNESS_CLI_DIR.resolve()),
+        "cli_path": str(HARNESS_CLI_DIR.resolve()),
         "version": "1.0.0",
     }
     (project / ".harness.json").write_text(json.dumps(config, indent=2) + "\n")

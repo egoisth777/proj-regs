@@ -21,9 +21,14 @@ from setup.init_project import (
     update_gitignore,
 )
 
-# Default template: mas-harness/ sibling of harness-cli/
-DEFAULT_TEMPLATE = Path(__file__).parent.parent.parent / "mas-harness"
-DEFAULT_REGISTRY_DIR = Path(__file__).parent.parent.parent  # proj-regs/
+# Snapshot root is two levels up from cli/ (cli/setup/bootstrap.py -> cli/ -> candidate-N/)
+_SNAPSHOT_ROOT = Path(__file__).parent.parent.parent
+# Default template: tpl-proj within the active snapshot's sys/ directory
+DEFAULT_TEMPLATE = _SNAPSHOT_ROOT / "sys" / "tpl-proj"
+# CLI source: the cli/ directory in the active snapshot
+DEFAULT_CLI_SOURCE = _SNAPSHOT_ROOT / "cli"
+# Default registry directory: regs/ at the repo root (3 levels up from snapshot root)
+DEFAULT_REGISTRY_DIR = _SNAPSHOT_ROOT.parent.parent.parent / "regs"
 
 NAME_PATTERN = re.compile(r"^[a-zA-Z0-9_-]+$")
 
@@ -243,9 +248,16 @@ def _clear_directory(dir_path: Path):
             item.unlink()
 
 
-def create_registry(name: str, registry_dir: Path, template_path: Path) -> Path:
-    """Create a new registry by copying template and stripping project-specific content."""
-    registry_path = registry_dir / name
+def create_registry(name: str, registry_dir: Path, template_path: Path,
+                    cli_source: Path = None) -> Path:
+    """Create a new registry with ssot/ and cli/ subdirectories.
+
+    The registry is created at registry_dir/<name>-regs/ with:
+      - ssot/  — registry content copied from template_path (tpl-proj)
+      - cli/   — CLI tooling copied from cli_source
+    """
+    registry_name = f"{name}-regs" if not name.endswith("-regs") else name
+    registry_path = registry_dir / registry_name
 
     # Validate
     if not template_path.exists():
@@ -253,34 +265,46 @@ def create_registry(name: str, registry_dir: Path, template_path: Path) -> Path:
         sys.exit(1)
 
     if registry_path.exists():
-        print(f"Error: Registry '{name}' already exists at {registry_path}", file=sys.stderr)
+        print(f"Error: Registry '{registry_name}' already exists at {registry_path}", file=sys.stderr)
         sys.exit(1)
 
-    # Copy template
+    # Create registry root
+    registry_path.mkdir(parents=True)
+
+    # Copy template into ssot/ subdirectory
+    ssot_path = registry_path / "ssot"
     shutil.copytree(
-        str(template_path), str(registry_path),
+        str(template_path), str(ssot_path),
         ignore=shutil.ignore_patterns(".git", "__pycache__", ".DS_Store"),
     )
 
-    # --- Strip project-specific content ---
+    # Copy CLI tooling into cli/ subdirectory
+    if cli_source and cli_source.exists():
+        shutil.copytree(
+            str(cli_source), str(registry_path / "cli"),
+            ignore=shutil.ignore_patterns(".git", "__pycache__", ".DS_Store",
+                                          ".pytest_cache", "node_modules"),
+        )
+
+    # --- Strip project-specific content in ssot/ ---
 
     # Reset files with inline templates
-    (registry_path / "00-Project-Memory.md").write_text(_reset_project_memory("", name))
-    (registry_path / "blueprint" / "design" / "architecture_overview.md").write_text(RESET_ARCHITECTURE)
-    (registry_path / "blueprint" / "design" / "api_mapping.md").write_text(RESET_API_MAPPING)
-    (registry_path / "blueprint" / "engineering" / "performance_goals.md").write_text(RESET_PERFORMANCE)
-    (registry_path / "blueprint" / "planning" / "roadmap.md").write_text(RESET_ROADMAP)
-    (registry_path / "runtime" / "active_sprint.md").write_text(RESET_ACTIVE_SPRINT)
-    (registry_path / "runtime" / "milestones.md").write_text(RESET_MILESTONES)
-    (registry_path / "runtime" / "backlog.md").write_text(RESET_BACKLOG)
-    (registry_path / "runtime" / "resolved_bugs.md").write_text(RESET_RESOLVED_BUGS)
-    (registry_path / "runtime" / "openspec" / "index.md").write_text(RESET_OPENSPEC_INDEX)
+    (ssot_path / "00-Project-Memory.md").write_text(_reset_project_memory("", name))
+    (ssot_path / "blueprint" / "design" / "architecture_overview.md").write_text(RESET_ARCHITECTURE)
+    (ssot_path / "blueprint" / "design" / "api_mapping.md").write_text(RESET_API_MAPPING)
+    (ssot_path / "blueprint" / "engineering" / "performance_goals.md").write_text(RESET_PERFORMANCE)
+    (ssot_path / "blueprint" / "planning" / "roadmap.md").write_text(RESET_ROADMAP)
+    (ssot_path / "runtime" / "active_sprint.md").write_text(RESET_ACTIVE_SPRINT)
+    (ssot_path / "runtime" / "milestones.md").write_text(RESET_MILESTONES)
+    (ssot_path / "runtime" / "backlog.md").write_text(RESET_BACKLOG)
+    (ssot_path / "runtime" / "resolved_bugs.md").write_text(RESET_RESOLVED_BUGS)
+    (ssot_path / "runtime" / "openspec" / "index.md").write_text(RESET_OPENSPEC_INDEX)
 
     # Clear directories (keep only .gitkeep)
-    _clear_directory(registry_path / "runtime" / "openspec" / "changes")
-    _clear_directory(registry_path / "runtime" / "openspec" / "archive")
-    _clear_directory(registry_path / "runtime" / "implementation")
-    _clear_directory(registry_path / "runtime" / "research")
+    _clear_directory(ssot_path / "runtime" / "openspec" / "changes")
+    _clear_directory(ssot_path / "runtime" / "openspec" / "archive")
+    _clear_directory(ssot_path / "runtime" / "implementation")
+    _clear_directory(ssot_path / "runtime" / "research")
 
     return registry_path
 
@@ -298,19 +322,24 @@ def bootstrap(name: str, project_path: Path, registry_dir: Path):
         print(f"Error: Template not found at {template_path}", file=sys.stderr)
         sys.exit(1)
 
+    cli_source = DEFAULT_CLI_SOURCE
+
     # Create registry-dir if needed
     registry_dir.mkdir(parents=True, exist_ok=True)
 
+    registry_name = f"{name}-regs" if not name.endswith("-regs") else name
     print(f"Bootstrapping MAS Harness for: {project_path}")
-    print(f"  Registry: {registry_dir / name}")
+    print(f"  Registry: {registry_dir / registry_name}")
 
-    # Step 1: Create registry
-    registry_path = create_registry(name, registry_dir, template_path)
+    # Step 1: Create registry with ssot/ and cli/ subdirectories
+    registry_path = create_registry(name, registry_dir, template_path,
+                                    cli_source=cli_source)
     print(f"  Registry created: {registry_path}")
 
     # Step 2: Validate project
     project = project_path.resolve()
-    registry = registry_path.resolve()
+    # The ssot/ subdirectory is the registry content for init_project
+    ssot_path = registry_path.resolve() / "ssot"
 
     if not project.exists():
         print(f"Error: Project directory does not exist: {project}", file=sys.stderr)
@@ -320,9 +349,9 @@ def bootstrap(name: str, project_path: Path, registry_dir: Path):
         sys.exit(1)
 
     # Step 3: Initialize project (reuse init_project functions)
-    create_harness_json(project, registry)
-    copy_templates(project, registry)
-    create_agents_symlink(project, registry)
+    create_harness_json(project, ssot_path)
+    copy_templates(project, ssot_path)
+    create_agents_symlink(project, ssot_path)
     configure_hooks(project)
     update_gitignore(project)
 

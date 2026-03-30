@@ -9,8 +9,10 @@ from pathlib import Path
 
 import pytest
 
-# The real mas-harness template
-MAS_HARNESS = Path(__file__).parent.parent.parent / "mas-harness"
+# Snapshot root is 3 levels up from this test file (tests/ -> cli/ -> candidate-0/)
+_SNAPSHOT_ROOT = Path(__file__).parent.parent.parent
+# The real tpl-proj template (within the active snapshot's sys/)
+TPL_PROJ = _SNAPSHOT_ROOT / "sys" / "tpl-proj"
 BOOTSTRAP_SCRIPT = Path(__file__).parent.parent / "setup" / "bootstrap.py"
 
 
@@ -47,19 +49,19 @@ class TestRegistryCreation:
     def test_creates_registry_at_correct_path(self, bootstrap_env):
         project, registry_dir = bootstrap_env
         _run_bootstrap("test-project", project, registry_dir)
-        assert (registry_dir / "test-project").is_dir()
+        assert (registry_dir / "test-project-regs").is_dir()
 
-    def test_registry_has_expected_file_count(self, bootstrap_env):
+    def test_registry_has_ssot_and_cli_subdirs(self, bootstrap_env):
         project, registry_dir = bootstrap_env
         _run_bootstrap("test-project", project, registry_dir)
-        registry = registry_dir / "test-project"
-        files = [f for f in registry.rglob("*") if f.is_file()]
-        assert len(files) == 41
+        registry = registry_dir / "test-project-regs"
+        assert (registry / "ssot").is_dir()
+        assert (registry / "cli").is_dir()
 
     def test_no_unexpected_files(self, bootstrap_env):
         project, registry_dir = bootstrap_env
         _run_bootstrap("test-project", project, registry_dir)
-        registry = registry_dir / "test-project"
+        registry = registry_dir / "test-project-regs"
         files = [f for f in registry.rglob("*") if f.is_file()]
         for f in files:
             assert "__pycache__" not in str(f)
@@ -68,7 +70,7 @@ class TestRegistryCreation:
     def test_context_map_has_12_roles(self, bootstrap_env):
         project, registry_dir = bootstrap_env
         _run_bootstrap("test-project", project, registry_dir)
-        cm = json.loads((registry_dir / "test-project" / "context_map.json").read_text())
+        cm = json.loads((registry_dir / "test-project-regs" / "ssot" / "context_map.json").read_text())
         assert len(cm["agent_role_context"]) == 12
 
 
@@ -78,69 +80,69 @@ class TestResetFiles:
     def test_project_memory_has_project_name(self, bootstrap_env):
         project, registry_dir = bootstrap_env
         _run_bootstrap("my-cool-app", project, registry_dir)
-        content = (registry_dir / "my-cool-app" / "00-Project-Memory.md").read_text()
+        content = (registry_dir / "my-cool-app-regs" / "ssot" / "00-Project-Memory.md").read_text()
         assert "my-cool-app" in content
         assert "MAS Harness" not in content
 
     def test_architecture_overview_reset(self, bootstrap_env):
         project, registry_dir = bootstrap_env
         _run_bootstrap("test-project", project, registry_dir)
-        content = (registry_dir / "test-project" / "blueprint" / "design" / "architecture_overview.md").read_text()
+        content = (registry_dir / "test-project-regs" / "ssot" / "blueprint" / "design" / "architecture_overview.md").read_text()
         assert "<!-- Describe the system context here. -->" in content
         assert "Protocol Layer" not in content  # harness-specific content gone
 
     def test_api_mapping_reset(self, bootstrap_env):
         project, registry_dir = bootstrap_env
         _run_bootstrap("test-project", project, registry_dir)
-        content = (registry_dir / "test-project" / "blueprint" / "design" / "api_mapping.md").read_text()
+        content = (registry_dir / "test-project-regs" / "ssot" / "blueprint" / "design" / "api_mapping.md").read_text()
         assert "context_map.json" in content
         assert "OpenSpec Status (Planned" not in content  # harness-specific gone
 
     def test_performance_goals_reset(self, bootstrap_env):
         project, registry_dir = bootstrap_env
         _run_bootstrap("test-project", project, registry_dir)
-        content = (registry_dir / "test-project" / "blueprint" / "engineering" / "performance_goals.md").read_text()
+        content = (registry_dir / "test-project-regs" / "ssot" / "blueprint" / "engineering" / "performance_goals.md").read_text()
         assert "<!-- Define performance goals" in content
         assert "Hook execution time" not in content  # harness-specific gone
 
     def test_roadmap_reset(self, bootstrap_env):
         project, registry_dir = bootstrap_env
         _run_bootstrap("test-project", project, registry_dir)
-        content = (registry_dir / "test-project" / "blueprint" / "planning" / "roadmap.md").read_text()
+        content = (registry_dir / "test-project-regs" / "ssot" / "blueprint" / "planning" / "roadmap.md").read_text()
         assert "## Milestone 1: <Name>" in content
         assert "Enforcement Layer" not in content  # harness milestones gone
 
     def test_active_sprint_reset(self, bootstrap_env):
         project, registry_dir = bootstrap_env
         _run_bootstrap("test-project", project, registry_dir)
-        content = (registry_dir / "test-project" / "runtime" / "active_sprint.md").read_text()
+        content = (registry_dir / "test-project-regs" / "ssot" / "runtime" / "active_sprint.md").read_text()
         assert "ORCHESTRATOR-ONLY" in content
         assert "## Statuses" in content
 
     def test_milestones_reset(self, bootstrap_env):
         project, registry_dir = bootstrap_env
         _run_bootstrap("test-project", project, registry_dir)
-        content = (registry_dir / "test-project" / "runtime" / "milestones.md").read_text()
+        content = (registry_dir / "test-project-regs" / "ssot" / "runtime" / "milestones.md").read_text()
         assert "## Milestone 1: <Name>" in content
         assert "Enforcement Layer" not in content
 
     def test_backlog_reset(self, bootstrap_env):
         project, registry_dir = bootstrap_env
         _run_bootstrap("test-project", project, registry_dir)
-        content = (registry_dir / "test-project" / "runtime" / "backlog.md").read_text()
+        content = (registry_dir / "test-project-regs" / "ssot" / "runtime" / "backlog.md").read_text()
         assert "## Features" in content
         assert "## Bugs" in content
 
     def test_resolved_bugs_reset(self, bootstrap_env):
         project, registry_dir = bootstrap_env
         _run_bootstrap("test-project", project, registry_dir)
-        content = (registry_dir / "test-project" / "runtime" / "resolved_bugs.md").read_text()
+        content = (registry_dir / "test-project-regs" / "ssot" / "runtime" / "resolved_bugs.md").read_text()
         assert "| Bug | Resolution" in content
 
     def test_openspec_index_reset(self, bootstrap_env):
         project, registry_dir = bootstrap_env
         _run_bootstrap("test-project", project, registry_dir)
-        content = (registry_dir / "test-project" / "runtime" / "openspec" / "index.md").read_text()
+        content = (registry_dir / "test-project-regs" / "ssot" / "runtime" / "openspec" / "index.md").read_text()
         assert "## Statuses" in content
         assert "| Feature | OpenSpec Path" in content
 
@@ -151,7 +153,7 @@ class TestDirectoryClearing:
     def test_openspec_changes_only_gitkeep(self, bootstrap_env):
         project, registry_dir = bootstrap_env
         _run_bootstrap("test-project", project, registry_dir)
-        changes = registry_dir / "test-project" / "runtime" / "openspec" / "changes"
+        changes = registry_dir / "test-project-regs" / "ssot" / "runtime" / "openspec" / "changes"
         files = list(changes.iterdir())
         assert len(files) == 1
         assert files[0].name == ".gitkeep"
@@ -159,7 +161,7 @@ class TestDirectoryClearing:
     def test_openspec_archive_only_gitkeep(self, bootstrap_env):
         project, registry_dir = bootstrap_env
         _run_bootstrap("test-project", project, registry_dir)
-        archive = registry_dir / "test-project" / "runtime" / "openspec" / "archive"
+        archive = registry_dir / "test-project-regs" / "ssot" / "runtime" / "openspec" / "archive"
         files = list(archive.iterdir())
         assert len(files) == 1
         assert files[0].name == ".gitkeep"
@@ -167,7 +169,7 @@ class TestDirectoryClearing:
     def test_implementation_only_gitkeep(self, bootstrap_env):
         project, registry_dir = bootstrap_env
         _run_bootstrap("test-project", project, registry_dir)
-        impl = registry_dir / "test-project" / "runtime" / "implementation"
+        impl = registry_dir / "test-project-regs" / "ssot" / "runtime" / "implementation"
         files = list(impl.iterdir())
         assert len(files) == 1
         assert files[0].name == ".gitkeep"
@@ -175,7 +177,7 @@ class TestDirectoryClearing:
     def test_research_only_gitkeep(self, bootstrap_env):
         project, registry_dir = bootstrap_env
         _run_bootstrap("test-project", project, registry_dir)
-        research = registry_dir / "test-project" / "runtime" / "research"
+        research = registry_dir / "test-project-regs" / "ssot" / "runtime" / "research"
         files = list(research.iterdir())
         assert len(files) == 1
         assert files[0].name == ".gitkeep"
@@ -184,18 +186,26 @@ class TestDirectoryClearing:
 # --- Project Initialization Tests ---
 
 class TestProjectInitialization:
-    def test_harness_json_points_to_new_registry(self, bootstrap_env):
+    def test_harness_json_points_to_ssot(self, bootstrap_env):
         project, registry_dir = bootstrap_env
         _run_bootstrap("test-project", project, registry_dir)
         config = json.loads((project / ".harness.json").read_text())
-        assert str(registry_dir / "test-project") in config["registry_path"]
+        assert "test-project-regs" in config["registry_path"]
+        assert config["registry_path"].endswith("ssot")
+
+    def test_harness_json_uses_cli_path(self, bootstrap_env):
+        project, registry_dir = bootstrap_env
+        _run_bootstrap("test-project", project, registry_dir)
+        config = json.loads((project / ".harness.json").read_text())
+        assert "cli_path" in config
+        assert "harness_cli_path" not in config
 
     def test_claude_md_created(self, bootstrap_env):
         project, registry_dir = bootstrap_env
         _run_bootstrap("test-project", project, registry_dir)
         assert (project / "CLAUDE.md").exists()
         content = (project / "CLAUDE.md").read_text()
-        assert str(registry_dir / "test-project") in content
+        assert "test-project-regs" in content
 
     def test_agents_symlink_to_new_registry(self, bootstrap_env):
         project, registry_dir = bootstrap_env
@@ -203,7 +213,7 @@ class TestProjectInitialization:
         agents = project / ".agents"
         assert agents.is_symlink()
         target = Path(os.readlink(str(agents)))
-        assert "test-project" in str(target)
+        assert "test-project-regs" in str(target)
         assert "orchestrate-members" in str(target)
 
     def test_hooks_configured(self, bootstrap_env):
@@ -243,23 +253,33 @@ class TestErrorHandling:
 
 class TestIntegration:
     @pytest.mark.skipif(
-        not MAS_HARNESS.exists(),
-        reason="mas-harness template not available"
+        not TPL_PROJ.exists(),
+        reason="tpl-proj template not available"
     )
     def test_full_bootstrap_with_real_template(self, bootstrap_env):
         project, registry_dir = bootstrap_env
         result = _run_bootstrap("integration-test", project, registry_dir)
-        assert result.returncode == 0
+        assert result.returncode == 0, f"Bootstrap failed: {result.stderr}"
 
-        registry = registry_dir / "integration-test"
+        registry = registry_dir / "integration-test-regs"
         assert registry.is_dir()
 
-        # Registry has correct structure
-        files = [f for f in registry.rglob("*") if f.is_file()]
-        assert len(files) == 41
+        # Registry has ssot/ and cli/ subdirectories
+        assert (registry / "ssot").is_dir()
+        assert (registry / "cli").is_dir()
+
+        # ssot has registry content
+        ssot_files = [f for f in (registry / "ssot").rglob("*") if f.is_file()]
+        assert len(ssot_files) > 0
+        assert (registry / "ssot" / "context_map.json").exists()
 
         # Project is initialized
         assert (project / ".harness.json").exists()
         assert (project / "CLAUDE.md").exists()
         assert (project / ".agents").is_symlink()
         assert (project / ".claude" / "settings.local.json").exists()
+
+        # harness.json uses new field name
+        config = json.loads((project / ".harness.json").read_text())
+        assert "cli_path" in config
+        assert "harness_cli_path" not in config
