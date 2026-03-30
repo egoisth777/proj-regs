@@ -91,18 +91,21 @@ def get_active_candidate(manifest_path: str) -> Optional[str]:
 
 def _next_candidate_id(manifest: dict[str, Any]) -> str:
     """Derive next candidate-N id from existing candidates in manifest."""
-    existing = manifest.get("candidates", {})
+    existing = manifest.get("candidates", [])
     if not existing:
         return "candidate-0"
-    max_n = max(int(k.split("-")[-1]) for k in existing)
+    max_n = max(int(c["id"].split("-")[-1]) for c in existing)
     return f"candidate-{max_n + 1}"
 
 
 def _find_existing_hash(manifest: dict[str, Any], tree_hash: str) -> Optional[str]:
     """Check if any existing candidate already has this tree hash."""
-    for cid, info in manifest.get("candidates", {}).items():
-        if info.get("hash") == tree_hash:
-            return cid
+    for candidate in manifest.get("candidates", []):
+        sha = candidate.get("sha256")
+        if sha is None:
+            continue
+        if sha == tree_hash:
+            return candidate["id"]
     return None
 
 
@@ -167,11 +170,15 @@ def _create_candidate_inner(
     (candidate_dir / "meta.json").write_text(json.dumps(meta, indent=2))
 
     # Update manifest
-    manifest["candidates"][cid] = {
-        "hash": tree_hash,
-        "parent_id": parent_id,
-        "status": "created",
-    }
+    manifest.setdefault("candidates", []).append({
+        "id": cid,
+        "parent": parent_id,
+        "status": "pending",
+        "mutation": mutation_description,
+        "sha256": tree_hash,
+        "pass_rate": {},
+        "created": None,
+    })
     save_manifest(manifest_path, manifest)
 
     return {"id": cid}
@@ -209,12 +216,18 @@ def promote_candidate(
 
     # Supersede old active
     old_active = manifest.get("active")
-    if old_active and old_active in manifest["candidates"]:
-        manifest["candidates"][old_active]["status"] = "superseded"
+    if old_active:
+        for c in manifest.get("candidates", []):
+            if c["id"] == old_active:
+                c["status"] = "superseded"
+                break
 
-    # Update manifest
+    # Activate new candidate
     manifest["active"] = candidate_id
-    manifest["candidates"][candidate_id]["status"] = "active"
+    for c in manifest.get("candidates", []):
+        if c["id"] == candidate_id:
+            c["status"] = "active"
+            break
     if candidate_id not in manifest.get("promoted", []):
         manifest.setdefault("promoted", []).append(candidate_id)
 
@@ -235,11 +248,28 @@ def rollback_to(
     snapshots_dir: str,
     manifest_path: str,
 ) -> None:
-    """Rollback: repoint active symlink + update manifest active field."""
+    """Rollback: repoint active symlink + update manifest active field.
+
+    Demotes the current active candidate to 'superseded' before activating
+    the rollback target.
+    """
     sd = Path(snapshots_dir)
     manifest = load_manifest(manifest_path)
 
+    # Demote old active
+    old_active = manifest.get("active")
+    if old_active and old_active != candidate_id:
+        for c in manifest.get("candidates", []):
+            if c["id"] == old_active:
+                c["status"] = "superseded"
+                break
+
+    # Activate rollback target
     manifest["active"] = candidate_id
+    for c in manifest.get("candidates", []):
+        if c["id"] == candidate_id:
+            c["status"] = "active"
+            break
     save_manifest(manifest_path, manifest)
 
     # Atomic symlink swap

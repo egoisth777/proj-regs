@@ -75,13 +75,13 @@ class TestPoolE:
         result = validate_layer_access("pool-e", "eval/scripts/check.py", "write")
         assert result["decision"] == "block"
 
-    def test_read_regs_blocked(self):
+    def test_read_regs_allowed(self):
         result = validate_layer_access("pool-e", "regs/config.yaml", "read")
-        assert result["decision"] == "block"
+        assert result["decision"] == "allow"
 
-    def test_write_regs_blocked(self):
+    def test_write_regs_allowed(self):
         result = validate_layer_access("pool-e", "regs/config.yaml", "write")
-        assert result["decision"] == "block"
+        assert result["decision"] == "allow"
 
     def test_read_orchestrator_blocked(self):
         result = validate_layer_access("pool-e", "orchestrator/plan.md", "read")
@@ -92,14 +92,14 @@ class TestPoolE:
         assert result["decision"] == "block"
 
     def test_read_unknown_layer_allowed(self):
-        """Non-layer paths pass through for pool-e."""
+        """Non-layer paths allow reads for pool-e."""
         result = validate_layer_access("pool-e", "src/main.py", "read")
         assert result["decision"] == "allow"
 
-    def test_write_unknown_layer_allowed(self):
-        """Non-layer paths pass through for pool-e."""
+    def test_write_unknown_layer_blocked(self):
+        """Pool roles cannot write non-layer paths."""
         result = validate_layer_access("pool-e", "src/main.py", "write")
-        assert result["decision"] == "allow"
+        assert result["decision"] == "block"
 
 
 # ─── pool-t (test author): nuanced eval access ─────────────────────
@@ -179,14 +179,15 @@ class TestPoolT:
         result = validate_layer_access("pool-t", "orchestrator/plan.md", "write")
         assert result["decision"] == "block"
 
-    # Non-layer paths pass through
+    # Non-layer paths: reads pass through, writes blocked
     def test_read_unknown_layer_allowed(self):
         result = validate_layer_access("pool-t", "src/main.py", "read")
         assert result["decision"] == "allow"
 
-    def test_write_unknown_layer_allowed(self):
+    def test_write_unknown_layer_blocked(self):
+        """Pool roles cannot write non-layer paths."""
         result = validate_layer_access("pool-t", "src/main.py", "write")
-        assert result["decision"] == "allow"
+        assert result["decision"] == "block"
 
 
 # ─── pool-v (verify): read eval/scripts + regs, no writes ──────────
@@ -341,14 +342,15 @@ class TestOrchestrator:
         result = validate_layer_access("orchestrator", "regs/config.yaml", "write")
         assert result["decision"] == "block"
 
-    # Non-layer pass through
+    # Non-layer paths: reads pass through, writes blocked
     def test_read_unknown_layer_allowed(self):
         result = validate_layer_access("orchestrator", "src/main.py", "read")
         assert result["decision"] == "allow"
 
-    def test_write_unknown_layer_allowed(self):
+    def test_write_unknown_layer_blocked(self):
+        """Pool roles cannot write non-layer paths."""
         result = validate_layer_access("orchestrator", "src/main.py", "write")
-        assert result["decision"] == "allow"
+        assert result["decision"] == "block"
 
 
 # ─── Non-pool roles pass through ───────────────────────────────────

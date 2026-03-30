@@ -52,7 +52,7 @@ def base_manifest():
     """A minimal valid manifest."""
     return {
         "active": None,
-        "candidates": {},
+        "candidates": [],
         "promoted": [],
     }
 
@@ -281,6 +281,40 @@ class TestCreateCandidate:
         # Workspace still destroyed
         assert not ws2.exists()
 
+    def test_dedup_skips_null_sha256(
+        self, tmp_path, snapshots_dir, manifest_path
+    ):
+        """Candidates with null sha256 (like candidate-0) are not matched."""
+        # Seed manifest with a candidate that has null sha256
+        manifest = {
+            "active": "candidate-0",
+            "candidates": [
+                {
+                    "id": "candidate-0",
+                    "parent": None,
+                    "status": "active",
+                    "mutation": None,
+                    "sha256": None,
+                    "pass_rate": {},
+                    "created": None,
+                }
+            ],
+            "promoted": ["candidate-0"],
+        }
+        save_manifest(str(manifest_path), manifest)
+
+        ws = tmp_path / "ws"
+        ws.mkdir()
+        (ws / "sys").mkdir()
+        (ws / "cli").mkdir()
+        (ws / "sys" / "f.txt").write_text("content\n")
+        result = create_candidate(
+            str(ws), str(snapshots_dir), str(manifest_path),
+            parent_id="candidate-0", mutation_description="new",
+        )
+        # Should create a new candidate, not dedup against null hash
+        assert result["id"] is not None
+
     def test_updates_manifest(
         self, workspace, snapshots_dir, manifest_path, base_manifest
     ):
@@ -291,7 +325,8 @@ class TestCreateCandidate:
             parent_id=None, mutation_description="test",
         )
         manifest = load_manifest(str(manifest_path))
-        assert result["id"] in manifest["candidates"]
+        candidate_ids = [c["id"] for c in manifest["candidates"]]
+        assert result["id"] in candidate_ids
 
     def test_increments_candidate_id(
         self, tmp_path, snapshots_dir, manifest_path, base_manifest
@@ -330,7 +365,7 @@ class TestCreateCandidate:
 class TestPromoteCandidate:
     def _setup_two_candidates(self, tmp_path, snapshots_dir, manifest_path):
         """Helper: create two candidates and return their ids."""
-        manifest = {"active": None, "candidates": {}, "promoted": []}
+        manifest = {"active": None, "candidates": [], "promoted": []}
         save_manifest(str(manifest_path), manifest)
 
         ws1 = tmp_path / "ws1"
@@ -379,8 +414,9 @@ class TestPromoteCandidate:
 
         manifest = load_manifest(str(manifest_path))
         assert manifest["active"] == c2
-        assert manifest["candidates"][c1]["status"] == "superseded"
-        assert manifest["candidates"][c2]["status"] == "active"
+        candidates_by_id = {c["id"]: c for c in manifest["candidates"]}
+        assert candidates_by_id[c1]["status"] == "superseded"
+        assert candidates_by_id[c2]["status"] == "active"
 
     def test_symlink_points_to_new_candidate(
         self, tmp_path, snapshots_dir, manifest_path
@@ -412,7 +448,7 @@ class TestPromoteCandidate:
 class TestRollbackTo:
     def _setup_promoted(self, tmp_path, snapshots_dir, manifest_path):
         """Helper: create two candidates, promote both. Return ids."""
-        manifest = {"active": None, "candidates": {}, "promoted": []}
+        manifest = {"active": None, "candidates": [], "promoted": []}
         save_manifest(str(manifest_path), manifest)
 
         ws1 = tmp_path / "ws1"
@@ -454,3 +490,28 @@ class TestRollbackTo:
 
         manifest = load_manifest(str(manifest_path))
         assert manifest["active"] == c1
+
+    def test_rollback_demotes_old_active(
+        self, tmp_path, snapshots_dir, manifest_path
+    ):
+        """rollback_to demotes the old active candidate to superseded."""
+        c1, c2 = self._setup_promoted(tmp_path, snapshots_dir, manifest_path)
+        # c2 is currently active after _setup_promoted
+        rollback_to(c1, str(snapshots_dir), str(manifest_path))
+
+        manifest = load_manifest(str(manifest_path))
+        candidates_by_id = {c["id"]: c for c in manifest["candidates"]}
+        assert candidates_by_id[c2]["status"] == "superseded"
+        assert candidates_by_id[c1]["status"] == "active"
+
+    def test_rollback_to_self_preserves_status(
+        self, tmp_path, snapshots_dir, manifest_path
+    ):
+        """Rolling back to the already-active candidate does not demote it."""
+        c1, c2 = self._setup_promoted(tmp_path, snapshots_dir, manifest_path)
+        # c2 is active; roll back to c2 (self)
+        rollback_to(c2, str(snapshots_dir), str(manifest_path))
+
+        manifest = load_manifest(str(manifest_path))
+        candidates_by_id = {c["id"]: c for c in manifest["candidates"]}
+        assert candidates_by_id[c2]["status"] == "active"

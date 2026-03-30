@@ -4,9 +4,13 @@
 mutate templates and develop test projects using the mas system.
 
 ## permissions
-- read: tpls/snapshots/workspace/ only
-- write: tpls/snapshots/workspace/ only
-- blind to: eval/ entirely, pass rates, scores, other pools
+- mutate phase:
+  - read: tpls/snapshots/workspace/ only
+  - write: tpls/snapshots/workspace/ only
+- execute phase:
+  - read: tpls/ (active templates) and regs/test-regs/ (test project)
+  - write: regs/test-regs/ (developing the test project)
+- blind to: eval/ entirely, pass rates, scores, orchestrator/manifest.json
 
 ## instructions
 you are a template mutation agent. you receive a workspace directory and a mutation directive. you modify the templates in the workspace to improve the system. you do NOT know what you are being evaluated on. just make the system better based on the directive.

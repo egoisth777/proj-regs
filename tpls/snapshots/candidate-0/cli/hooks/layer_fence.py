@@ -72,18 +72,18 @@ def validate_layer_access(role: str, file_path: str, operation: str) -> dict:
 
     layer = get_layer(file_path)
 
-    # Non-layer paths: read-only pools block writes, others allow
+    # Non-layer paths: pool roles can only read, not write
     if layer is None:
-        if role in READ_ONLY_POOLS and operation == "write":
+        if operation == "write":
             return {
                 "decision": "block",
-                "reason": f"Role '{role}' cannot {operation} any files.",
+                "reason": f"Role '{role}' cannot write non-layer paths.",
             }
         return {"decision": "allow"}
 
-    # ── pool-e: read+write tpls/ only, cannot see eval/ at all ──
+    # ── pool-e: read+write tpls/ and regs/, cannot see eval/ at all ──
     if role == "pool-e":
-        if layer == "tpls":
+        if layer in ("tpls", "regs"):
             return {"decision": "allow"}
         return {
             "decision": "block",
