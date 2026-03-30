@@ -1,7 +1,3 @@
-CLAUDE.md
-AGENTS.md
-.claude/
-.harness.json
 .worktrees/
 __pycache__/
 *.pyc
