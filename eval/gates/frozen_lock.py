@@ -10,9 +10,17 @@ def generate_lock(eval_dir: Path) -> dict:
     """Generate sha-256 hashes for all files in eval/ (excluding FROZEN.lock itself)."""
     hashes = {}
     for fpath in sorted(eval_dir.rglob("*")):
-        if fpath.is_file() and fpath.name != "FROZEN.lock":
-            rel = fpath.relative_to(eval_dir).as_posix()
-            hashes[rel] = hashlib.sha256(fpath.read_bytes()).hexdigest()
+        if not fpath.is_file():
+            continue
+        if fpath.name == "FROZEN.lock":
+            continue
+        # Exclude build artifacts that vary by Python version/platform
+        if "__pycache__" in fpath.parts or fpath.suffix == ".pyc":
+            continue
+        if fpath.name == ".pytest_cache" or ".pytest_cache" in fpath.parts:
+            continue
+        rel = fpath.relative_to(eval_dir).as_posix()
+        hashes[rel] = hashlib.sha256(fpath.read_bytes()).hexdigest()
     return {"version": "1.0", "hashes": hashes}
 
 

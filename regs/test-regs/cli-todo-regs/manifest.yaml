@@ -1,0 +1,27 @@
+name: cli-todo
+domain: cli-tools
+complexity: minimal
+tier: seed
+description: >
+  a command-line todo list application. supports add, list, complete,
+  and delete operations. stores tasks in a local json file.
+features:
+  - name: add-task
+    description: add a new task with a title and optional priority
+    spec_cascade: full
+  - name: list-tasks
+    description: list all tasks, optionally filtered by status
+    spec_cascade: full
+  - name: complete-task
+    description: mark a task as completed by id
+    spec_cascade: full
+expected_roles:
+  - behavior-spec-writer
+  - test-spec-writer
+  - team-lead
+  - worker
+  - sdet-unit
+tech_stack:
+  language: python
+  test_framework: pytest
+  min_python: "3.10"
