@@ -1,0 +1,27 @@
+category: p1-spec-cascade
+description: "did the spec cascade execute in the correct order?"
+questions:
+  - id: p1.1
+    text: "did every feature have a proposal created before any other spec?"
+    type: timestamp
+    tier: seed
+  - id: p1.2
+    text: "did behavior_spec exist before test_spec was written?"
+    type: timestamp
+    tier: tier-2
+  - id: p1.3
+    text: "did test_spec exist before any test files were written?"
+    type: timestamp
+    tier: seed
+  - id: p1.4
+    text: "did test files exist before implementation code was written?"
+    type: timestamp
+    tier: tier-2
+  - id: p1.5
+    text: "are all spec documents non-trivial (>50 lines or substantive content)?"
+    type: judgment
+    tier: tier-3
+  - id: p1.6
+    text: "did every feature complete the full cascade (no skipped stages)?"
+    type: timestamp
+    tier: seed

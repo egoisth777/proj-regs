@@ -1,0 +1,22 @@
+tier: tier-2
+description: "expanded questions - unlocked when seed is at 100% for 3 consecutive runs"
+questions:
+  - p1.2
+  - p1.4
+  - p2.2
+  - p2.4
+  - p2.5
+  - p3.1
+  - p3.2
+  - p3.3
+  - p4.2
+  - p4.3
+  - o1.3
+  - o1.4
+  - o2.1
+  - o2.2
+  - o3.1
+  - o3.2
+  - o4.2
+  - o4.3
+unlock_condition: "seed at 100% for 3 consecutive runs"

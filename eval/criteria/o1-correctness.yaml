@@ -1,0 +1,27 @@
+category: o1-correctness
+description: "does the produced software work correctly?"
+questions:
+  - id: o1.1
+    text: "does the application build without errors?"
+    type: automated
+    tier: seed
+  - id: o1.2
+    text: "do all unit tests pass?"
+    type: automated
+    tier: seed
+  - id: o1.3
+    text: "do all integration tests pass?"
+    type: automated
+    tier: tier-2
+  - id: o1.4
+    text: "does the app start and run without runtime errors?"
+    type: automated
+    tier: tier-2
+  - id: o1.5
+    text: "does each behavior in the spec have a corresponding working feature?"
+    type: judgment
+    tier: tier-3
+  - id: o1.6
+    text: "do api contracts match what the spec defined?"
+    type: judgment
+    tier: tier-3

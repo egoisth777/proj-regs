@@ -1,0 +1,27 @@
+category: p4-ssot-integrity
+description: "did the ssot registry stay consistent and up-to-date?"
+questions:
+  - id: p4.1
+    text: "was active_sprint.md updated at each phase transition?"
+    type: timestamp
+    tier: seed
+  - id: p4.2
+    text: "does status.md for each feature reflect its actual final state?"
+    type: judgment
+    tier: tier-2
+  - id: p4.3
+    text: "is the openspec index consistent with completed/archived features?"
+    type: judgment
+    tier: tier-2
+  - id: p4.4
+    text: "were implementation records created for all completed features?"
+    type: judgment
+    tier: tier-3
+  - id: p4.5
+    text: "does context_map.json accurately reflect the final project structure?"
+    type: judgment
+    tier: tier-3
+  - id: p4.6
+    text: "was milestones.md updated upon sprint completion?"
+    type: judgment
+    tier: tier-3
