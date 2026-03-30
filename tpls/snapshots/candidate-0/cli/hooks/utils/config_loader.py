@@ -29,6 +29,11 @@ def load_harness_config(project_root: str) -> Optional[dict]:
     # support both old and new field names
     if "cli_path" not in config and "harness_cli_path" in config:
         config["cli_path"] = config["harness_cli_path"]
+    # resolve relative paths against project root
+    root = Path(project_root)
+    for key in ("registry_path", "cli_path", "harness_cli_path"):
+        if key in config and not os.path.isabs(config[key]):
+            config[key] = str((root / config[key]).resolve())
     return config
 
 

@@ -11,7 +11,7 @@ def generate_lock(eval_dir: Path) -> dict:
     hashes = {}
     for fpath in sorted(eval_dir.rglob("*")):
         if fpath.is_file() and fpath.name != "FROZEN.lock":
-            rel = str(fpath.relative_to(eval_dir))
+            rel = fpath.relative_to(eval_dir).as_posix()
             hashes[rel] = hashlib.sha256(fpath.read_bytes()).hexdigest()
     return {"version": "1.0", "hashes": hashes}
 
@@ -22,7 +22,12 @@ def verify_lock(eval_dir: Path) -> tuple[bool, list[str]]:
     if not lock_path.exists():
         return False, ["FROZEN.lock missing"]
 
-    lock = json.loads(lock_path.read_text())
+    try:
+        lock = json.loads(lock_path.read_text())
+    except OSError as e:
+        return False, [f"Failed to read FROZEN.lock: {e}"]
+    except json.JSONDecodeError as e:
+        return False, [f"FROZEN.lock is not valid JSON: {e}"]
     expected = lock.get("hashes", {})
     actual = generate_lock(eval_dir)["hashes"]
 
@@ -55,5 +60,5 @@ if __name__ == "__main__":
     else:
         lock = generate_lock(eval_dir)
         lock_path = eval_dir / "FROZEN.lock"
-        lock_path.write_text(json.dumps(lock, indent=2))
+        lock_path.write_text(json.dumps(lock, indent=2, sort_keys=True))
         print(f"Generated FROZEN.lock with {len(lock['hashes'])} entries")

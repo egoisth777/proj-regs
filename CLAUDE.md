@@ -6,7 +6,7 @@
 3. **All context, planning, tracking, and design docs live EXCLUSIVELY in the Project Registry.**
 
 ## SSoT Routing
-You MUST first _read_ the **Project Registry** as **SSoT**: `/home/aeonli/repos/proj-regs/regs/omni-regs/ssot`
+You MUST first _read_ the **Project Registry** as **SSoT** from the registry path configured in `.harness.json` (default: `regs/omni-regs/ssot`).
 
 ## Definitions
 - **Sprint**: One feature's complete lifecycle through the spec cascade (proposal → merge). NOT the industry-standard time-boxed sprint.
