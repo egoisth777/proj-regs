@@ -11,9 +11,14 @@ tags:
 
 ## Active Features
 
-| Feature | OpenSpec Path | Worktree | Status | Assigned Milestone | Started |
-|---|---|---|---|---|---|
-|  |  |  |  |  |  |
+| Feature | OpenSpec Path | Status | Started |
+|---|---|---|---|
+| add-task | runtime/openspec/changes/feat-001-add-task | execution | 2026-03-30 |
+| list-tasks | runtime/openspec/changes/feat-002-list-tasks | execution | 2026-03-30 |
+| complete-task | runtime/openspec/changes/feat-003-complete-task | execution | 2026-03-30 |
+
+## Current Feature: feat-003-complete-task
+## Phase: execution
 
 ## Statuses
 - `spec-cascade` — Behavior/test specs being written
