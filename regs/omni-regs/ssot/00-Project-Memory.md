@@ -1,7 +1,7 @@
-# mas-harness-regs — Project Memory
+# omni — Project Memory
 
 ## Context Protocol
-- This Registry acts as the Single Source of Truth (SSoT) for the mas-harness-regs project codebase.
+- This Registry acts as the Single Source of Truth (SSoT) for the omni project codebase.
 - ONLY the Orchestrator (via dispatched subagents) reads and modifies `runtime/` updates.
 - Agents receive documents via `context_map.json` injection — they do not browse the registry directly.
 
