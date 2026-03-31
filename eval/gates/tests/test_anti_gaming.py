@@ -1,4 +1,4 @@
-"""Tests for anti_gaming.py --- integrity validation between phases."""
+"""Tests for anti_gaming.py — integrity validation between phases."""
 
 import json
 import hashlib
