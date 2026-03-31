@@ -5,15 +5,9 @@ or temporal violations.
 """
 
 import json
-import os
-import sys
 from pathlib import Path
 from typing import Any
 
-# Import frozen_lock from eval/gates/
-_gates_dir = str(Path(__file__).parent.parent / "eval" / "gates")
-if _gates_dir not in sys.path:
-    sys.path.insert(0, _gates_dir)
 from frozen_lock import verify_lock
 
 

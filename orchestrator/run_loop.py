@@ -17,13 +17,16 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-# Add orchestrator/ and tpls/cli/ to path for cross-module imports
+# Add orchestrator/, tpls/cli/, and eval/gates/ to path for cross-module imports
 _orch_dir = str(Path(__file__).parent)
 _cli_dir = str(Path(__file__).parent.parent / "tpls" / "cli")
+_gates_dir = str(Path(__file__).parent.parent / "eval" / "gates")
 if _orch_dir not in sys.path:
     sys.path.insert(0, _orch_dir)
 if _cli_dir not in sys.path:
     sys.path.insert(0, _cli_dir)
+if _gates_dir not in sys.path:
+    sys.path.insert(0, _gates_dir)
 
 from loop import prepare_mutation, decide_outcome, advance_phase, get_current_phase
 from dispatch import prepare_workspace, cleanup_workspace
