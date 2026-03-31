@@ -1,7 +1,7 @@
 [project]
-name = "orchestrator"
+name = "eval-loop"
 version = "1.0.0"
-description = "Evolution loop orchestrator state machine"
+description = "Evolution loop state machine"
 requires-python = ">=3.10"
 dependencies = ["pyyaml>=6.0"]
 

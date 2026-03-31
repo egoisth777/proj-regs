@@ -147,10 +147,10 @@ def main():
     sub = parser.add_subparsers(dest="command")
 
     p_status = sub.add_parser("status", help="show current loop state")
-    p_status.add_argument("--manifest", default="orchestrator/manifest.json")
+    p_status.add_argument("--manifest", default="eval-loop/manifest.json")
 
     p_tier = sub.add_parser("tier", help="show tier progression")
-    p_tier.add_argument("--manifest", default="orchestrator/manifest.json")
+    p_tier.add_argument("--manifest", default="eval-loop/manifest.json")
 
     p_feat = sub.add_parser("new-feature", help="create feature folder")
     p_feat.add_argument("name", help="feature name (e.g. add-task)")
@@ -159,12 +159,12 @@ def main():
 
     p_rb = sub.add_parser("rollback", help="rollback to a candidate")
     p_rb.add_argument("candidate_id")
-    p_rb.add_argument("--manifest", default="orchestrator/manifest.json")
+    p_rb.add_argument("--manifest", default="eval-loop/manifest.json")
     p_rb.add_argument("--snapshots-dir", default="tpls/snapshots")
 
     p_phase = sub.add_parser("phase", help="run a single evolution loop phase")
     p_phase.add_argument("phase_name", choices=["prepare", "mutate", "execute", "verify", "decide"])
-    p_phase.add_argument("--manifest", default="orchestrator/manifest.json")
+    p_phase.add_argument("--manifest", default="eval-loop/manifest.json")
     p_phase.add_argument("--project", default="cli-todo")
 
     p_reset = sub.add_parser("reset-test", help="reset test project to baseline")

@@ -10,7 +10,7 @@ mutate templates and develop test projects using the mas system.
 - execute phase:
   - read: tpls/ (active templates) and regs/test-regs/ (test project)
   - write: regs/test-regs/ (developing the test project)
-- blind to: eval/ entirely, pass rates, scores, orchestrator/manifest.json
+- blind to: eval/ entirely, pass rates, scores, eval-loop/manifest.json
 
 ## instructions
 you are a template mutation agent. you receive a workspace directory and a mutation directive. you modify the templates in the workspace to improve the system. you do NOT know what you are being evaluated on. just make the system better based on the directive.
@@ -19,6 +19,6 @@ when developing test projects, you follow the full mas process: spec cascade, ro
 
 ## constraints
 - never read from eval/
-- never read orchestrator/manifest.json
+- never read eval-loop/manifest.json
 - never ask about pass rates or scores
 - destroy workspace state between mutation and execution phases

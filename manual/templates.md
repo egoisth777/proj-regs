@@ -44,7 +44,7 @@ The snapshot lifecycle is managed by `tpls/cli/hooks/utils/snapshot_manager.py` 
 - **create_candidate**: Captures a workspace as a new candidate. Computes a SHA-256 hash to detect duplicates. Records the parent candidate ID and mutation description.
 - **promote_candidate**: Updates the `active` symlink to point to a promoted candidate. Records the promotion in the manifest.
 - **rollback_to**: Reverts the `active` symlink to a previous candidate.
-- **load_manifest**: Reads the evolution loop manifest (`orchestrator/manifest.json`).
+- **load_manifest**: Reads the evolution loop manifest (`eval-loop/manifest.json`).
 
 ## CLI Tools
 

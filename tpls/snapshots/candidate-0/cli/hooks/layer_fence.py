@@ -10,7 +10,7 @@ from hooks.utils.config_loader import find_project_root
 
 
 # Layers identified by first path component
-LAYER_NAMES = {"eval", "tpls", "regs", "orchestrator"}
+LAYER_NAMES = {"eval", "tpls", "regs", "eval-loop"}
 
 # Tools that perform write operations
 WRITE_TOOLS = {"Edit", "Write", "NotebookEdit"}
@@ -151,9 +151,9 @@ def validate_layer_access(role: str, file_path: str, operation: str) -> dict:
             "reason": f"Role '{role}' cannot {operation} '{layer}/' layer.",
         }
 
-    # ── orchestrator: read+write orchestrator/ only, cannot write eval/ ──
+    # ── orchestrator: read+write eval-loop/ only, cannot write eval/ ──
     if role == "orchestrator":
-        if layer == "orchestrator":
+        if layer == "eval-loop":
             return {"decision": "allow"}
         return {
             "decision": "block",

@@ -38,10 +38,10 @@ class TestGetLayer:
         assert get_layer("regs/omni-regs/ssot/status.md") == "regs"
 
     def test_orchestrator_top_level(self):
-        assert get_layer("orchestrator/plan.md") == "orchestrator"
+        assert get_layer("eval-loop/plan.md") == "eval-loop"
 
     def test_orchestrator_nested(self):
-        assert get_layer("orchestrator/dispatch/task1.md") == "orchestrator"
+        assert get_layer("eval-loop/dispatch/task1.md") == "eval-loop"
 
     def test_unknown_layer_src(self):
         assert get_layer("src/main.py") is None
@@ -84,11 +84,11 @@ class TestPoolE:
         assert result["decision"] == "allow"
 
     def test_read_orchestrator_blocked(self):
-        result = validate_layer_access("pool-e", "orchestrator/plan.md", "read")
+        result = validate_layer_access("pool-e", "eval-loop/plan.md", "read")
         assert result["decision"] == "block"
 
     def test_write_orchestrator_blocked(self):
-        result = validate_layer_access("pool-e", "orchestrator/plan.md", "write")
+        result = validate_layer_access("pool-e", "eval-loop/plan.md", "write")
         assert result["decision"] == "block"
 
     def test_read_unknown_layer_allowed(self):
@@ -172,11 +172,11 @@ class TestPoolT:
 
     # orchestrator blocked
     def test_read_orchestrator_blocked(self):
-        result = validate_layer_access("pool-t", "orchestrator/plan.md", "read")
+        result = validate_layer_access("pool-t", "eval-loop/plan.md", "read")
         assert result["decision"] == "block"
 
     def test_write_orchestrator_blocked(self):
-        result = validate_layer_access("pool-t", "orchestrator/plan.md", "write")
+        result = validate_layer_access("pool-t", "eval-loop/plan.md", "write")
         assert result["decision"] == "block"
 
     # Non-layer paths: reads pass through, writes blocked
@@ -224,7 +224,7 @@ class TestPoolV:
         assert result["decision"] == "block"
 
     def test_read_orchestrator_blocked(self):
-        result = validate_layer_access("pool-v", "orchestrator/plan.md", "read")
+        result = validate_layer_access("pool-v", "eval-loop/plan.md", "read")
         assert result["decision"] == "block"
 
     # All writes blocked
@@ -241,7 +241,7 @@ class TestPoolV:
         assert result["decision"] == "block"
 
     def test_write_orchestrator_blocked(self):
-        result = validate_layer_access("pool-v", "orchestrator/plan.md", "write")
+        result = validate_layer_access("pool-v", "eval-loop/plan.md", "write")
         assert result["decision"] == "block"
 
     # Non-layer pass through
@@ -273,7 +273,7 @@ class TestPoolR:
         assert result["decision"] == "block"
 
     def test_read_orchestrator_blocked(self):
-        result = validate_layer_access("pool-r", "orchestrator/plan.md", "read")
+        result = validate_layer_access("pool-r", "eval-loop/plan.md", "read")
         assert result["decision"] == "block"
 
     # All writes blocked
@@ -300,16 +300,16 @@ class TestPoolR:
         assert result["decision"] == "block"
 
 
-# ─── orchestrator: read+write orchestrator/ only, no eval writes ────
+# ─── orchestrator: read+write eval-loop/ only, no eval writes ────
 
 class TestOrchestrator:
     # Read + write orchestrator allowed
     def test_read_orchestrator_allowed(self):
-        result = validate_layer_access("orchestrator", "orchestrator/plan.md", "read")
+        result = validate_layer_access("orchestrator", "eval-loop/plan.md", "read")
         assert result["decision"] == "allow"
 
     def test_write_orchestrator_allowed(self):
-        result = validate_layer_access("orchestrator", "orchestrator/dispatch/task.md", "write")
+        result = validate_layer_access("orchestrator", "eval-loop/dispatch/task.md", "write")
         assert result["decision"] == "allow"
 
     # Eval writes blocked

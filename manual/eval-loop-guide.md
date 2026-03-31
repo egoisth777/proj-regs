@@ -1,4 +1,4 @@
-# Orchestrator Guide
+# Eval-Loop Guide
 
 This guide covers the operational commands available through `opsx.py` and the `run_loop.py` runner for managing the evolution loop.
 
@@ -11,7 +11,7 @@ This guide covers the operational commands available through `opsx.py` and the `
 Show the current evolution loop state.
 
 ```bash
-python orchestrator/opsx.py status [--manifest PATH]
+python eval-loop/opsx.py status [--manifest PATH]
 ```
 
 Output includes:
@@ -38,7 +38,7 @@ Next action: consecutive 100%: 3/3 for tier advance
 Show tier progression status.
 
 ```bash
-python orchestrator/opsx.py tier [--manifest PATH]
+python eval-loop/opsx.py tier [--manifest PATH]
 ```
 
 Output:
@@ -53,7 +53,7 @@ Need 3 consecutive to advance
 Create a new feature folder with an auto-incrementing sequence number.
 
 ```bash
-python orchestrator/opsx.py new-feature NAME --changes-dir PATH --template-dir PATH
+python eval-loop/opsx.py new-feature NAME --changes-dir PATH --template-dir PATH
 ```
 
 Arguments:
@@ -68,7 +68,7 @@ Creates a folder like `feat-001-add-task/` with files copied from the template d
 Run a single phase of the evolution loop.
 
 ```bash
-python orchestrator/opsx.py phase PHASE_NAME [--project PROJECT]
+python eval-loop/opsx.py phase PHASE_NAME [--project PROJECT]
 ```
 
 Valid phase names: `prepare`, `mutate`, `execute`, `verify`, `decide`.
@@ -84,7 +84,7 @@ Each phase outputs JSON describing its result.
 Revert the active snapshot to a previous candidate.
 
 ```bash
-python orchestrator/opsx.py rollback CANDIDATE_ID [--manifest PATH] [--snapshots-dir PATH]
+python eval-loop/opsx.py rollback CANDIDATE_ID [--manifest PATH] [--snapshots-dir PATH]
 ```
 
 This updates the `active` symlink in `tpls/snapshots/` to point to the specified candidate and updates the manifest accordingly.
@@ -94,7 +94,7 @@ This updates the `active` symlink in `tpls/snapshots/` to point to the specified
 Reset a test project to its post-development baseline state.
 
 ```bash
-python orchestrator/opsx.py reset-test NAME
+python eval-loop/opsx.py reset-test NAME
 ```
 
 Arguments:
@@ -111,7 +111,7 @@ The evolution loop runner supports two modes: rounds-based evaluation and single
 Run multiple evaluation rounds against the test project:
 
 ```bash
-python orchestrator/run_loop.py [--rounds N] [--project NAME]
+python eval-loop/run_loop.py [--rounds N] [--project NAME]
 ```
 
 Arguments:
@@ -141,7 +141,7 @@ Example output:
 Run one phase of the 5-phase cycle:
 
 ```bash
-python orchestrator/run_loop.py --phase PHASE_NAME [--project NAME]
+python eval-loop/run_loop.py --phase PHASE_NAME [--project NAME]
 ```
 
 This is the mode used by `opsx.py phase`. Each phase returns a JSON result. Phases that require manual pool dispatch (mutate and execute) include an `action_required` field in their output.
@@ -150,19 +150,19 @@ This is the mode used by `opsx.py phase`. Each phase returns a JSON result. Phas
 
 A typical evolution loop iteration looks like this:
 
-1. **Prepare**: `python orchestrator/opsx.py phase prepare`
+1. **Prepare**: `python eval-loop/opsx.py phase prepare`
    - Validates eval integrity, generates mutation directive.
 
-2. **Mutate**: `python orchestrator/opsx.py phase mutate`
+2. **Mutate**: `python eval-loop/opsx.py phase mutate`
    - Creates workspace. Dispatch pool-e to mutate templates.
 
-3. **Execute**: `python orchestrator/opsx.py phase execute`
+3. **Execute**: `python eval-loop/opsx.py phase execute`
    - Captures candidate. Dispatch pool-e to develop test project, then pool-v to verify.
 
-4. **Verify**: `python orchestrator/opsx.py phase verify`
+4. **Verify**: `python eval-loop/opsx.py phase verify`
    - Runs check scripts, computes pass rates.
 
-5. **Decide**: `python orchestrator/opsx.py phase decide`
+5. **Decide**: `python eval-loop/opsx.py phase decide`
    - Compares candidate vs active, promotes or rejects.
 
 Between phases 2-3 and 3-4, manual pool dispatch is required. The orchestrator agent handles this dispatch based on the `action_required` field in the phase output.
