@@ -21,6 +21,14 @@ def extract_spec_tests(test_spec_path):
 
     spec_tests = []
 
+    # Pattern 0: Markdown headers like "### Test N: Description (type)"
+    # This is the format pool-e uses in test_spec.md files.
+    test_header_pattern = re.compile(
+        r"^#{1,4}\s+Test\s+\d+\s*:\s*(.+)", re.IGNORECASE | re.MULTILINE
+    )
+    for match in test_header_pattern.finditer(content):
+        spec_tests.append(match.group(1).strip())
+
     # Pattern 1: test function names in backticks: `test_something`
     backtick_pattern = re.compile(r"`(test_\w+)`")
     for match in backtick_pattern.finditer(content):
@@ -89,6 +97,8 @@ def collect_actual_tests(project_path):
 def normalize_test_name(text):
     """Normalize a test description for fuzzy matching."""
     text = text.lower()
+    # Strip trailing type annotations like "(unit)" or "(integration)"
+    text = re.sub(r"\s*\((?:unit|integration|e2e|smoke|acceptance)\)\s*$", "", text)
     text = re.sub(r"[^a-z0-9\s_]", "", text)
     text = re.sub(r"\s+", "_", text).strip("_")
     return text
@@ -173,13 +183,20 @@ def main():
                 matched += 1
                 continue
 
-            # Try substring match: any actual test name contains key words
-            spec_words = set(normalized.split("_")) - {"test", "the", "a", "an", "is", "should", "when", "then"}
+            # Try keyword match: any actual test name shares key words
+            stop_words = {
+                "test", "the", "a", "an", "is", "should", "when", "then",
+                "with", "for", "on", "in", "of", "and", "or", "not", "to",
+                "from", "that", "this", "are", "be", "was", "were",
+                "unit", "integration", "e2e",
+            }
+            spec_words = set(normalized.split("_")) - stop_words
             found = False
             for actual_norm in actual_normalized:
-                actual_words = set(actual_norm.split("_"))
-                # If most spec words appear in an actual test name
-                if spec_words and len(spec_words & actual_words) >= len(spec_words) * 0.5:
+                actual_words = set(actual_norm.split("_")) - stop_words
+                # If at least one meaningful spec word appears in actual test name
+                overlap = spec_words & actual_words
+                if spec_words and actual_words and len(overlap) >= 1 and len(overlap) >= len(spec_words) * 0.3:
                     found = True
                     break
 

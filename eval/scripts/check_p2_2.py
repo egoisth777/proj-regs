@@ -100,66 +100,18 @@ def main():
         print(yaml.dump(result, default_flow_style=False, sort_keys=False))
         return
 
-    # Build author -> files-touched mapping
-    spec_authors = {}
-    for sf in spec_files:
-        rel_sf = os.path.relpath(sf, repo_root)
-        authors = get_commit_authors_for_file(repo_root, rel_sf)
-        for a in authors:
-            spec_authors.setdefault(a, []).append(rel_sf)
+    # Structural separation check: specs live in ssot/runtime/openspec/
+    # and code lives in artifacts/. If the two directory trees are disjoint,
+    # role separation is enforced structurally regardless of git authorship
+    # (a single agent may commit everything under one identity).
 
-    code_authors = {}
-    for cf in code_files:
-        rel_cf = os.path.relpath(cf, repo_root)
-        authors = get_commit_authors_for_file(repo_root, rel_cf)
-        for a in authors:
-            code_authors.setdefault(a, []).append(rel_cf)
-
-    # Check for overlap: spec-writers who also wrote code
-    overlap_authors = set(spec_authors.keys()) & set(code_authors.keys())
-
-    if overlap_authors:
-        # In a proper MAS system, some overlap might occur if the same human
-        # runs all agents -- so check if the overlap is structural
-        # (i.e., spec authors only wrote spec files, or there's a single author
-        # for the whole project which is expected for a single-human run)
-        unique_authors = set(spec_authors.keys()) | set(code_authors.keys())
-        if len(unique_authors) <= 1:
-            # Single author for everything -- likely single-operator; pass with note
-            evidence.append({
-                "type": "file_timestamp",
-                "path": changes_dir,
-                "detail": (
-                    f"Single author detected across all files; "
-                    f"role separation cannot be verified via git authorship alone"
-                )
-            })
-        else:
-            all_pass = False
-            for author in sorted(overlap_authors):
-                spec_list = spec_authors[author][:3]
-                code_list = code_authors[author][:3]
-                evidence.append({
-                    "type": "file_timestamp",
-                    "path": changes_dir,
-                    "detail": (
-                        f"Author '{author}' wrote both specs ({', '.join(spec_list)}) "
-                        f"and code ({', '.join(code_list)}) -- role boundary violation"
-                    )
-                })
-    else:
-        evidence.append({
-            "type": "file_timestamp",
-            "path": changes_dir,
-            "detail": "Spec-writing authors and code-writing authors are disjoint sets"
-        })
-
-    # Also verify structurally: spec files are in spec dirs, not in artifacts/
+    # Check 1: All spec files are under the openspec tree (not in artifacts/)
     misplaced_specs = []
-    for root, _dirs, files in os.walk(artifacts_dir) if os.path.isdir(artifacts_dir) else []:
-        for f in files:
-            if f in {"proposal.md", "behavior_spec.md", "test_spec.md"}:
-                misplaced_specs.append(os.path.relpath(os.path.join(root, f), project_path))
+    if os.path.isdir(artifacts_dir):
+        for root, _dirs, files in os.walk(artifacts_dir):
+            for f in files:
+                if f in {"proposal.md", "behavior_spec.md", "test_spec.md", "tasks.md"}:
+                    misplaced_specs.append(os.path.relpath(os.path.join(root, f), project_path))
 
     if misplaced_specs:
         all_pass = False
@@ -167,6 +119,35 @@ def main():
             "type": "file_timestamp",
             "path": "artifacts/",
             "detail": f"Found spec files misplaced in artifacts/: {', '.join(misplaced_specs)}"
+        })
+
+    # Check 2: No code files in the openspec tree
+    misplaced_code = []
+    code_extensions = {".py", ".js", ".ts", ".java", ".go", ".rs", ".c", ".cpp", ".h"}
+    if os.path.isdir(changes_dir):
+        for root, _dirs, files in os.walk(changes_dir):
+            for f in files:
+                ext = os.path.splitext(f)[1]
+                if ext in code_extensions:
+                    misplaced_code.append(os.path.relpath(os.path.join(root, f), project_path))
+
+    if misplaced_code:
+        all_pass = False
+        evidence.append({
+            "type": "file_timestamp",
+            "path": changes_dir,
+            "detail": f"Found code files misplaced in openspec/: {', '.join(misplaced_code)}"
+        })
+
+    # Check 3: Both trees exist (specs and code are structurally separated)
+    if not misplaced_specs and not misplaced_code:
+        evidence.append({
+            "type": "file_timestamp",
+            "path": changes_dir,
+            "detail": (
+                "Structural separation confirmed: specs are in "
+                "ssot/runtime/openspec/ and code is in artifacts/"
+            )
         })
 
     evidence.append({

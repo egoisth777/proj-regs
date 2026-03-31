@@ -119,7 +119,6 @@ def main():
 
     spec_features = collect_spec_features(changes_dir)
     impl_modules = collect_implemented_modules(artifacts_dir)
-    spec_keywords = extract_feature_keywords(changes_dir)
 
     evidence.append({
         "type": "file_timestamp",
@@ -147,57 +146,67 @@ def main():
         print(yaml.dump(result, default_flow_style=False, sort_keys=False))
         return
 
-    # Check for modules that don't match any spec feature
-    unspecced = []
-    all_known = spec_features | spec_keywords
+    # Check 1: Every feature directory has a behavior_spec.md
+    features_without_spec = []
+    for feature in sorted(spec_features):
+        behavior_spec = os.path.join(changes_dir, feature, "behavior_spec.md")
+        if not os.path.isfile(behavior_spec):
+            features_without_spec.append(feature)
 
+    if features_without_spec:
+        all_pass = False
+        evidence.append({
+            "type": "file_timestamp",
+            "path": changes_dir,
+            "detail": (
+                f"Features missing behavior_spec.md: "
+                f"{', '.join(features_without_spec)}"
+            )
+        })
+    else:
+        evidence.append({
+            "type": "file_timestamp",
+            "path": changes_dir,
+            "detail": "All features have behavior_spec.md"
+        })
+
+    # Check 2: Every source module has at least one corresponding test file
+    test_dirs = [
+        os.path.join(artifacts_dir, "tests"),
+        os.path.join(artifacts_dir, "test"),
+    ]
+    test_files = set()
+    for td in test_dirs:
+        if not os.path.isdir(td):
+            continue
+        for root, _dirs, files in os.walk(td):
+            for f in files:
+                if f.endswith(".py") and (f.startswith("test_") or f.endswith("_test.py")):
+                    # Extract the module name the test covers
+                    name = f.replace("test_", "").replace("_test", "")
+                    name = os.path.splitext(name)[0].lower()
+                    test_files.add(name)
+
+    modules_without_tests = []
     for module in sorted(impl_modules):
-        # Check various matching strategies
-        matched = False
+        if module not in test_files:
+            modules_without_tests.append(module)
 
-        # Direct match
-        if module in spec_features:
-            matched = True
-
-        # Substring match: spec feature name contains module name or vice versa
-        if not matched:
-            for sf in spec_features:
-                if module in sf or sf in module:
-                    matched = True
-                    break
-
-        # Keyword match: module name appears in spec keywords
-        if not matched:
-            if module in spec_keywords:
-                matched = True
-
-        # Hyphen/underscore normalization
-        if not matched:
-            norm_module = module.replace("-", "_").replace("_", "")
-            for sf in spec_features:
-                norm_sf = sf.replace("-", "_").replace("_", "")
-                if norm_module == norm_sf or norm_module in norm_sf or norm_sf in norm_module:
-                    matched = True
-                    break
-
-        if not matched:
-            unspecced.append(module)
-
-    if unspecced:
+    if modules_without_tests:
         all_pass = False
         evidence.append({
             "type": "file_timestamp",
             "path": artifacts_dir,
             "detail": (
-                f"Implemented modules without matching specs: "
-                f"{', '.join(unspecced)}"
+                f"Modules without corresponding tests: "
+                f"{', '.join(modules_without_tests)}"
             )
         })
     else:
         evidence.append({
             "type": "file_timestamp",
             "path": artifacts_dir,
-            "detail": "All implemented modules have corresponding spec features"
+            "detail": "All implemented modules have corresponding test files"
         })
 
     result = {

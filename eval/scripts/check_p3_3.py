@@ -76,20 +76,19 @@ def find_duplicates(tasks_by_feature):
                 continue
             all_tasks.append((feature, task, normalized))
 
-    # Check for near-duplicates across different features
+    # Check for exact duplicates across different features (after normalization).
+    # Substring/fuzzy matches are intentionally excluded: common task patterns
+    # like "write CLI integration tests" naturally recur across features and
+    # are not redundant dispatches.
     for i in range(len(all_tasks)):
         for j in range(i + 1, len(all_tasks)):
             f1, t1, n1 = all_tasks[i]
             f2, t2, n2 = all_tasks[j]
             if f1 == f2:
                 continue  # Same feature, might be intentional subtasks
-            # Check for exact or near-exact match
+            # Only flag exact normalized matches
             if n1 == n2:
                 duplicates.append((f1, t1, f2, t2))
-            elif len(n1) > 20 and len(n2) > 20:
-                # Check substring containment for longer tasks
-                if n1 in n2 or n2 in n1:
-                    duplicates.append((f1, t1, f2, t2))
 
     return duplicates
 
