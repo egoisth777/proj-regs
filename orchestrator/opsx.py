@@ -87,6 +87,20 @@ def cmd_new_feature(
     return f"Created {folder_name}"
 
 
+def cmd_phase(phase: str, manifest_path: Path, project: str) -> str:
+    """Run a single evolution loop phase."""
+    import subprocess
+    result = subprocess.run(
+        [sys.executable, str(Path(__file__).parent / "run_loop.py"),
+         "--phase", phase, "--project", project],
+        capture_output=True, text=True, timeout=120,
+        cwd=str(Path(__file__).parent.parent)
+    )
+    if result.returncode != 0:
+        return f"Error: {result.stderr}"
+    return result.stdout
+
+
 def cmd_reset_test(name: str, project_root: Path) -> str:
     """Reset a test project to its post-development baseline state."""
     import subprocess
@@ -148,6 +162,11 @@ def main():
     p_rb.add_argument("--manifest", default="orchestrator/manifest.json")
     p_rb.add_argument("--snapshots-dir", default="tpls/snapshots")
 
+    p_phase = sub.add_parser("phase", help="run a single evolution loop phase")
+    p_phase.add_argument("phase_name", choices=["prepare", "mutate", "execute", "verify", "decide"])
+    p_phase.add_argument("--manifest", default="orchestrator/manifest.json")
+    p_phase.add_argument("--project", default="cli-todo")
+
     p_reset = sub.add_parser("reset-test", help="reset test project to baseline")
     p_reset.add_argument("name", help="test project name (e.g. cli-todo)")
 
@@ -159,6 +178,8 @@ def main():
         print(cmd_tier(Path(args.manifest)))
     elif args.command == "new-feature":
         print(cmd_new_feature(args.name, Path(args.changes_dir), Path(args.template_dir)))
+    elif args.command == "phase":
+        print(cmd_phase(args.phase_name, Path(args.manifest), args.project))
     elif args.command == "rollback":
         _cli_dir = str(Path(__file__).parent.parent / "tpls" / "snapshots" / "candidate-0" / "cli")
         if _cli_dir not in sys.path:
