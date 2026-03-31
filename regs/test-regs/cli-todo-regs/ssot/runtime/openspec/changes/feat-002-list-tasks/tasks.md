@@ -7,7 +7,7 @@
 
 ### Task 1: Implement TodoStore.list_tasks method
 
-**File scope:**
+#### File Scope
 - `artifacts/src/todo.py`
 
 **Assignee:** @Pool-E
@@ -25,7 +25,7 @@ Add the `list_tasks(status_filter="all")` method to the TodoStore class.
 
 ### Task 2: Implement CLI list subcommand
 
-**File scope:**
+#### File Scope
 - `artifacts/src/cli.py`
 
 **Assignee:** @Pool-E
@@ -43,7 +43,7 @@ Add the `list` subcommand to the argparse parser.
 
 ### Task 3: Write unit tests for list_tasks
 
-**File scope:**
+#### File Scope
 - `artifacts/tests/test_todo.py`
 
 **Assignee:** @Pool-E
@@ -58,7 +58,7 @@ list completed filter, invalid filter, insertion order, all fields present.
 
 ### Task 4: Write CLI integration tests for list
 
-**File scope:**
+#### File Scope
 - `artifacts/tests/test_cli.py`
 
 **Assignee:** @Pool-E

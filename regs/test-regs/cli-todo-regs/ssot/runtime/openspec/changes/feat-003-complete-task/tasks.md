@@ -7,7 +7,7 @@
 
 ### Task 1: Implement TodoStore.complete_task method
 
-**File scope:**
+#### File Scope
 - `artifacts/src/todo.py`
 
 **Assignee:** @Pool-E
@@ -27,7 +27,7 @@ Add the `complete_task(task_id)` method to the TodoStore class.
 
 ### Task 2: Implement CLI complete subcommand
 
-**File scope:**
+#### File Scope
 - `artifacts/src/cli.py`
 
 **Assignee:** @Pool-E
@@ -44,7 +44,7 @@ Add the `complete` subcommand to the argparse parser.
 
 ### Task 3: Write unit tests for complete_task
 
-**File scope:**
+#### File Scope
 - `artifacts/tests/test_todo.py`
 
 **Assignee:** @Pool-E
@@ -59,7 +59,7 @@ task not found, empty store, already completed, other tasks unchanged.
 
 ### Task 4: Write CLI integration tests for complete
 
-**File scope:**
+#### File Scope
 - `artifacts/tests/test_cli.py`
 
 **Assignee:** @Pool-E

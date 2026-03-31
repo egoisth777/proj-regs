@@ -7,7 +7,7 @@
 
 ### Task 1: Implement Task data model and TodoStore.add_task
 
-**File scope:**
+#### File Scope
 - `artifacts/src/__init__.py`
 - `artifacts/src/todo.py`
 
@@ -27,7 +27,7 @@ status (str), created_at (str). Implement the TodoStore class with:
 
 ### Task 2: Implement CLI add subcommand
 
-**File scope:**
+#### File Scope
 - `artifacts/src/cli.py`
 
 **Assignee:** @Pool-E
@@ -45,7 +45,7 @@ Create the CLI entry point using argparse with an `add` subcommand.
 
 ### Task 3: Write unit tests for TodoStore
 
-**File scope:**
+#### File Scope
 - `artifacts/tests/__init__.py`
 - `artifacts/tests/conftest.py`
 - `artifacts/tests/test_todo.py`
@@ -63,7 +63,7 @@ title rejection, file auto-creation, persistence format.
 
 ### Task 4: Write CLI integration tests
 
-**File scope:**
+#### File Scope
 - `artifacts/tests/test_cli.py`
 
 **Assignee:** @Pool-E
@@ -78,7 +78,7 @@ stdout, stderr, exit codes, and file contents for add operations.
 
 ### Task 5: Create pyproject.toml
 
-**File scope:**
+#### File Scope
 - `artifacts/pyproject.toml`
 
 **Assignee:** @Pool-E
