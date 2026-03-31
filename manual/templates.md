@@ -6,10 +6,12 @@ The `tpls/` directory contains the templates that define how projects are struct
 
 ```
 tpls/
-  cli/           -- CLI tools, hooks, setup scripts
-  sys/           -- System-level templates (project structure templates)
+  cli/           -- Symlink to snapshots/active/cli (CLI tools, hooks, setup scripts)
+  sys/           -- Symlink to snapshots/active/sys (system-level templates)
   snapshots/     -- Snapshot management for evolution loop
 ```
+
+`tpls/cli` and `tpls/sys` are **symlinks** into `snapshots/active/cli` and `snapshots/active/sys` respectively. This is the mechanism by which the active snapshot's templates become the "current" templates. When the evolution loop promotes a new candidate (updating the `active` symlink inside `snapshots/`), the top-level `cli/` and `sys/` paths automatically resolve to the new candidate's content.
 
 ## Snapshots
 

@@ -188,3 +188,5 @@ Key fields:
 - **consecutive_passes**: Number of consecutive perfect-score runs.
 - **candidates**: Array of all candidates with their pass rates.
 - **promoted**: History of promoted candidate IDs.
+
+> **Note**: The manifest may also contain additional internal state fields not shown in the example above, such as `_last_directive`, `_last_candidate`, and `_last_evidence`. These are used by the loop engine to carry context between phases and should be treated as opaque internal state.

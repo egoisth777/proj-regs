@@ -24,5 +24,6 @@ This manual covers every major subsystem. Start with the system overview for the
 | `eval/` | Evaluation framework (criteria, gates, scripts, tiers, pools) |
 | `orchestrator/` | Evolution loop engine (loop, dispatch, anti-gaming, opsx CLI) |
 | `.harness.json` | Project harness config |
+| `docs/` | Planning documents and design specs (e.g., `docs/superpowers/`) |
 | `.agents` | Symlink to agent role definitions |
 | `CLAUDE.md` | Agent instructions for the MAS |

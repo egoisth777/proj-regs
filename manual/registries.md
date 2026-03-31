@@ -48,9 +48,13 @@ Located under `regs/omni-regs/ssot/runtime/`. These folders track live execution
 | `runtime/openspec/index.md` | Index of all features |
 | `runtime/openspec/changes/` | Active feature specs (proposals, behavior specs, test specs) |
 | `runtime/openspec/archive/` | Completed feature specs |
-| `runtime/implementation/` | Implementation records, indexed in `IR_INDEX.md` |
+| `runtime/implementation/` | Implementation records |
 | `runtime/resolved_bugs.md` | Log of resolved bugs |
 | `runtime/research/` | Scratchpad for research notes |
+
+## Implementation Record Index
+
+`regs/omni-regs/ssot/IR_INDEX.md` lives at the SSoT root (not inside `runtime/implementation/`). It serves as the top-level index of all implementation records. Agents consult this file to locate implementation details for completed features.
 
 ## Context Map
 
