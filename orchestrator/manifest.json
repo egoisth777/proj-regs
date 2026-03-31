@@ -2,7 +2,7 @@
   "active": "candidate-0",
   "phase": "prepare",
   "tier": "seed",
-  "test_domain": null,
+  "test_domain": "cli-todo",
   "consecutive_passes": 0,
   "candidates": [
     {
@@ -11,10 +11,22 @@
       "status": "active",
       "mutation": null,
       "sha256": null,
-      "pass_rate": {},
+      "pass_rate": {
+        "p1": "0/3",
+        "p2": "1/2",
+        "o1": "2/2",
+        "o4": "0/1",
+        "p4": "1/1",
+        "overall": "4/9"
+      },
       "created": "2026-03-29T00:00:00Z"
     }
   ],
-  "promoted": ["candidate-0"],
-  "next_action": "begin self-evolution loop - run first test project against seed tier"
+  "promoted": [
+    "candidate-0"
+  ],
+  "next_action": "last outcome: baseline, continuing loop",
+  "_last_directive": "general improvement \u2014 no pass rate data yet, focus on spec cascade and role enforcement fundamentals",
+  "_last_candidate": "candidate-0",
+  "_last_evidence": "regs/test-regs/cli-todo-regs/evidence-report.yaml"
 }
