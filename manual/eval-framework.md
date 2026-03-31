@@ -87,7 +87,7 @@ Unlocked when tier-2 is at 100% for 3 consecutive runs. The full question set:
 
 ### Tier Advancement
 
-The evolution loop tracks `consecutive_passes` in `orchestrator/manifest.json`. When the active candidate achieves 100% on all active questions for 3 consecutive runs, the tier advances and the counter resets.
+The evolution loop tracks `consecutive_passes` in `eval-loop/manifest.json`. When the active candidate achieves 100% on all active questions for 3 consecutive runs, the tier advances and the counter resets.
 
 ## Check Scripts
 
@@ -108,7 +108,7 @@ evidence:
     detail: "Feature 'feat-001-add-task': proposal.md (git_commit=1711612800) <= behavior_spec.md (git_commit=1711612900) -- OK"
 ```
 
-The runner (`orchestrator/run_loop.py`) executes all check scripts, filters results by the active tier's question list, and computes per-category and overall pass rates.
+The runner (`eval-loop/run_loop.py`) executes all check scripts, filters results by the active tier's question list, and computes per-category and overall pass rates.
 
 ## Gates
 
@@ -144,7 +144,7 @@ Randomly samples evidence answers for independent verification. Judgment-based e
 
 ## FROZEN.lock
 
-The `FROZEN.lock` file at `eval/FROZEN.lock` is a JSON file containing SHA-256 hashes for every file in the `eval/` directory. It is checked at the start of each evolution loop iteration (the prepare phase) by `orchestrator/anti_gaming.py`.
+The `FROZEN.lock` file at `eval/FROZEN.lock` is a JSON file containing SHA-256 hashes for every file in the `eval/` directory. It is checked at the start of each evolution loop iteration (the prepare phase) by `eval/gates/anti_gaming.py`.
 
 If any file has been added, removed, or modified without updating the lock, the evolution loop halts with an integrity violation. This prevents the system (or any pool agent) from gaming the evaluation by modifying criteria or scripts.
 

@@ -10,7 +10,7 @@ from hooks.utils.config_loader import find_project_root
 
 
 # Layers identified by first path component
-LAYER_NAMES = {"eval", "tpls", "regs", "orchestrator"}
+LAYER_NAMES = {"eval", "tpls", "regs", "eval-loop"}
 
 # Tools that perform write operations
 WRITE_TOOLS = {"Edit", "Write", "NotebookEdit"}
@@ -34,7 +34,7 @@ POOL_V_READABLE_EVAL_SUBDIRS = {"scripts"}
 def get_layer(file_path: str) -> Optional[str]:
     """Return the layer name based on the first path component.
 
-    Returns "eval", "tpls", "regs", or "orchestrator", or None for other paths.
+    Returns "eval", "tpls", "regs", or "eval-loop", or None for other paths.
     """
     if not file_path:
         return None
@@ -108,7 +108,7 @@ def validate_layer_access(role: str, file_path: str, operation: str) -> dict:
                     "decision": "block",
                     "reason": f"Role '{role}' cannot {operation} 'eval/{subdir or file_path}'.",
                 }
-        # tpls, regs, orchestrator blocked
+        # tpls, regs, eval-loop blocked
         return {
             "decision": "block",
             "reason": f"Role '{role}' cannot {operation} '{layer}/' layer.",
@@ -151,9 +151,9 @@ def validate_layer_access(role: str, file_path: str, operation: str) -> dict:
             "reason": f"Role '{role}' cannot {operation} '{layer}/' layer.",
         }
 
-    # ── orchestrator: read+write orchestrator/ only, cannot write eval/ ──
+    # ── orchestrator: read+write eval-loop/ only, cannot write eval/ ──
     if role == "orchestrator":
-        if layer == "orchestrator":
+        if layer == "eval-loop":
             return {"decision": "allow"}
         return {
             "decision": "block",

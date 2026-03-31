@@ -16,7 +16,7 @@ prepare -> mutate -> execute -> verify -> decide
 
 **What happens**:
 1. Anti-gaming check: verify `eval/` integrity against `FROZEN.lock`.
-2. Load the active candidate's pass rates from `orchestrator/manifest.json`.
+2. Load the active candidate's pass rates from `eval-loop/manifest.json`.
 3. Identify the worst-performing category (lowest pass rate ratio).
 4. Generate a directive string, e.g.: "improve spec cascade (p1) -- currently at 4/6. analyze template weaknesses that cause spec cascade failures and strengthen enforcement."
 5. Advance phase to `mutate`.
@@ -85,7 +85,7 @@ The evolution loop uses four isolated pools, each with restricted permissions en
 **Permissions**:
 - Mutate phase: read/write `tpls/snapshots/workspace/` only.
 - Execute phase: read `tpls/` and `regs/test-regs/`; write `regs/test-regs/`.
-- Blind to: `eval/` entirely, pass rates, scores, `orchestrator/manifest.json`.
+- Blind to: `eval/` entirely, pass rates, scores, `eval-loop/manifest.json`.
 
 **Key constraint**: Pool-e does not know what it is being evaluated on. It receives a directive (e.g., "improve spec cascade") and must improve the templates based on that guidance alone.
 
@@ -124,7 +124,7 @@ The evolution loop uses four isolated pools, each with restricted permissions en
 
 ## Sparse-Checkout Isolation
 
-Each pool's visibility is enforced through sparse-checkout configurations defined in `orchestrator/dispatch.py`. The configurations specify:
+Each pool's visibility is enforced through sparse-checkout configurations defined in `eval-loop/dispatch.py`. The configurations specify:
 
 - **include**: Directories the pool can see.
 - **exclude**: Directories that must NOT be present in the pool's worktree.
@@ -133,7 +133,7 @@ The `eval/gates/pool_isolation.py` gate can independently verify that a worktree
 
 ## Anti-Gaming Validation
 
-Three anti-gaming checks run during the loop, implemented in `orchestrator/anti_gaming.py`:
+Three anti-gaming checks run during the loop, implemented in `eval/gates/anti_gaming.py`:
 
 1. **Eval integrity** (prepare phase): Verify `eval/` files match `FROZEN.lock` hashes. Detects tampering with criteria, scripts, or gates.
 
@@ -153,7 +153,7 @@ After advancing, the consecutive counter resets and the loop continues with the 
 
 ## Manifest State
 
-All evolution loop state is stored in `orchestrator/manifest.json`:
+All evolution loop state is stored in `eval-loop/manifest.json`:
 
 ```json
 {

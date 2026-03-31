@@ -13,7 +13,7 @@ The system operates on two levels:
 
 ### Orchestrator + Subagent Delegation
 
-The orchestrator agent role is a pure delegator for project feature files -- it never reads or writes feature code, specs, or test files directly, delegating all such work to subagents. However, the orchestrator runtime modules (`loop.py`, `opsx.py`, `run_loop.py`) do perform direct I/O on manifest and state files (e.g., `orchestrator/manifest.json`) to manage evolution loop state.
+The orchestrator agent role is a pure delegator for project feature files -- it never reads or writes feature code, specs, or test files directly, delegating all such work to subagents. However, the orchestrator runtime modules (`loop.py`, `opsx.py`, `run_loop.py`) do perform direct I/O on manifest and state files (e.g., `eval-loop/manifest.json`) to manage evolution loop state.
 
 The orchestrator agent:
 
@@ -58,7 +58,7 @@ The system evaluates its own output against 48 yes/no questions across 8 categor
 | `.harness.json` | Points to registry path (`regs/omni-regs/ssot`) and CLI path (`tpls/cli`) |
 | `CLAUDE.md` | Top-level instructions injected into every agent session |
 | `.agents` | Symlink to `regs/omni-regs/ssot/blueprint/orchestrate-members/` |
-| `orchestrator/manifest.json` | Evolution loop state (phase, tier, candidates, scores) |
+| `eval-loop/manifest.json` | Evolution loop state (phase, tier, candidates, scores) |
 
 ## How Everything Connects
 
@@ -81,5 +81,5 @@ Orchestrator (main agent, pure delegator)
         |
         uses eval/ framework (criteria, scripts, gates)
         mutates tpls/ (templates)
-        tracks state in orchestrator/manifest.json
+        tracks state in eval-loop/manifest.json
 ```

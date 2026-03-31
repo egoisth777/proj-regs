@@ -8,29 +8,29 @@ POOL_SPARSE_CONFIGS = {
     "pool-e": {
         "mutate": {
             "include": ["tpls/snapshots/workspace/"],
-            "exclude": ["eval/", "orchestrator/"],
+            "exclude": ["eval/", "eval-loop/"],
         },
         "execute": {
             "include": ["tpls/", "regs/test-regs/"],
-            "exclude": ["eval/", "orchestrator/"],
+            "exclude": ["eval/", "eval-loop/"],
         },
     },
     "pool-t": {
         "default": {
             "include": ["eval/criteria/", "eval/tiers/", "eval/scripts/"],
-            "exclude": ["tpls/", "regs/", "orchestrator/"],
+            "exclude": ["tpls/", "regs/", "eval-loop/"],
         },
     },
     "pool-v": {
         "default": {
             "include": ["eval/scripts/", "regs/test-regs/"],
-            "exclude": ["eval/criteria/", "tpls/", "orchestrator/"],
+            "exclude": ["eval/criteria/", "tpls/", "eval-loop/"],
         },
     },
     "pool-r": {
         "default": {
             "include": ["regs/"],
-            "exclude": ["eval/", "tpls/", "orchestrator/"],
+            "exclude": ["eval/", "tpls/", "eval-loop/"],
         },
     },
 }

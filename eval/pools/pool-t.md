@@ -19,5 +19,5 @@ each script should:
 ## constraints
 - never read from tpls/ or regs/
 - never read pool e output or artifacts
-- never read orchestrator/manifest.json
+- never read eval-loop/manifest.json
 - scripts must be deterministic and reproducible

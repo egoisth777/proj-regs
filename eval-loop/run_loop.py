@@ -6,7 +6,7 @@ phases (verify existing templates) and tracks consecutive passes for
 tier advancement.
 
 Usage:
-    python orchestrator/run_loop.py [--rounds N] [--project cli-todo]
+    python eval-loop/run_loop.py [--rounds N] [--project cli-todo]
 """
 
 import json
@@ -17,7 +17,7 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-# Add orchestrator/, tpls/cli/, and eval/gates/ to path for cross-module imports
+# Add eval-loop/, tpls/cli/, and eval/gates/ to path for cross-module imports
 _orch_dir = str(Path(__file__).parent)
 _cli_dir = str(Path(__file__).parent.parent / "tpls" / "cli")
 _gates_dir = str(Path(__file__).parent.parent / "eval" / "gates")
@@ -292,7 +292,7 @@ def main():
     args = parser.parse_args()
 
     repo_root = Path(__file__).parent.parent
-    manifest_path = repo_root / "orchestrator" / "manifest.json"
+    manifest_path = repo_root / "eval-loop" / "manifest.json"
     scripts_dir = repo_root / "eval" / "scripts"
     tiers_dir = repo_root / "eval" / "tiers"
     eval_dir = repo_root / "eval"
