@@ -6,15 +6,39 @@ than 5 consecutive identical non-blank lines of code.
 """
 
 import os
+import re
 import sys
 import yaml
 
 
 MIN_DUPLICATE_LINES = 5
 
+# Lines that are trivial / boilerplate and should not count toward duplication
+_TRIVIAL_LINE_RE = re.compile(
+    r"^("
+    r"[\[\]\{\}\(\),.:;]+"          # pure punctuation (braces, brackets, etc.)
+    r"|pass"
+    r"|return"
+    r"|return\s+None"
+    r"|else:"
+    r"|try:"
+    r"|except.*:"
+    r"|finally:"
+    r"|\"\"\".*\"\"\""              # single-line docstrings
+    r"|\'\'\'.*\'\'\'"
+    r"|#.*"                         # comment-only lines
+    r"|(from|import)\s+.*"          # import lines
+    r")$"
+)
+
+
+def _is_trivial(line: str) -> bool:
+    """Return True if a stripped source line is trivial boilerplate."""
+    return bool(_TRIVIAL_LINE_RE.match(line))
+
 
 def extract_function_blocks(filepath):
-    """Extract function bodies as lists of stripped lines, keyed by name."""
+    """Extract function bodies as lists of stripped non-trivial lines, keyed by name."""
     try:
         with open(filepath, "r", encoding="utf-8", errors="replace") as f:
             lines = f.readlines()
@@ -51,8 +75,8 @@ def extract_function_blocks(filepath):
                 current_func = None
                 current_lines = []
             else:
-                # Still in function body
-                if stripped:
+                # Still in function body -- keep only non-blank, non-trivial lines
+                if stripped and not _is_trivial(lstripped):
                     current_lines.append(lstripped)
 
     # Save last function
@@ -119,8 +143,11 @@ def main():
         for root, _dirs, files in os.walk(sd):
             if "__pycache__" in root:
                 continue
+            basename = os.path.basename(root)
+            if basename in ("tests", "test"):
+                continue
             for f in files:
-                if f.endswith(".py") and not f.startswith("test_"):
+                if f.endswith(".py") and not f.startswith("test_") and f != "conftest.py":
                     fp = os.path.join(root, f)
                     blocks = extract_function_blocks(fp)
                     all_blocks.update(blocks)

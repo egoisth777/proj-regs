@@ -26,23 +26,39 @@ def find_repo_root(project_path):
     return project_path
 
 
-def get_all_committed_files(repo_root):
-    """Get all files ever committed in the repo."""
+def get_project_commit_hashes(repo_root, rel_project):
+    """Get commit hashes that touch files within the project directory."""
     try:
         result = subprocess.run(
-            ["git", "log", "--all", "--name-only", "--pretty=format:"],
+            ["git", "log", "--all", "--pretty=format:%H", "--", rel_project + "/"],
             capture_output=True, text=True, cwd=repo_root, timeout=60
         )
         if result.returncode == 0:
-            files = set()
-            for line in result.stdout.strip().splitlines():
-                line = line.strip()
-                if line:
-                    files.add(line)
-            return files
+            return [h.strip() for h in result.stdout.strip().splitlines() if h.strip()]
     except (subprocess.TimeoutExpired, FileNotFoundError):
         pass
-    return set()
+    return []
+
+
+def get_files_in_commits(repo_root, commit_hashes):
+    """Get all files touched by the given commits (each commit individually)."""
+    if not commit_hashes:
+        return set()
+    files = set()
+    for sha in commit_hashes:
+        try:
+            result = subprocess.run(
+                ["git", "diff-tree", "--no-commit-id", "-r", "--name-only", sha],
+                capture_output=True, text=True, cwd=repo_root, timeout=30
+            )
+            if result.returncode == 0:
+                for line in result.stdout.strip().splitlines():
+                    line = line.strip()
+                    if line:
+                        files.add(line)
+        except (subprocess.TimeoutExpired, FileNotFoundError):
+            pass
+    return files
 
 
 def main():
@@ -76,13 +92,14 @@ def main():
         print(yaml.dump(result, default_flow_style=False, sort_keys=False))
         return
 
-    committed_files = get_all_committed_files(repo_root)
+    # Only examine commits that actually touch files within the project
+    project_commits = get_project_commit_hashes(repo_root, rel_project)
 
-    if not committed_files:
+    if not project_commits:
         evidence.append({
             "type": "file_timestamp",
             "path": project_path,
-            "detail": "No committed files found in repository"
+            "detail": "No commits found that touch the project directory"
         })
         result = {
             "question": "p2.6",
@@ -107,16 +124,69 @@ def main():
     if not rel_project.startswith("regs/"):
         allowed_prefixes.append("regs/")
 
-    violations = []
-    for fpath in sorted(committed_files):
-        in_boundary = any(
+    def is_in_boundary(fpath):
+        return any(
             fpath == prefix or fpath.startswith(prefix)
             for prefix in allowed_prefixes
         )
-        if not in_boundary:
-            violations.append(fpath)
 
-    if violations:
+    # For each project-scoped commit, determine whether it is truly a
+    # project-agent commit (majority of files inside the project dir) vs.
+    # a system commit that incidentally touched the project.
+    # Only check project-agent commits for boundary violations.
+    violations = []
+    agent_commit_count = 0
+    total_files_checked = 0
+
+    for sha in project_commits:
+        commit_files = set()
+        try:
+            r = subprocess.run(
+                ["git", "diff-tree", "--no-commit-id", "-r", "--name-only", sha],
+                capture_output=True, text=True, cwd=repo_root, timeout=30
+            )
+            if r.returncode == 0:
+                for line in r.stdout.strip().splitlines():
+                    line = line.strip()
+                    if line:
+                        commit_files.add(line)
+        except (subprocess.TimeoutExpired, FileNotFoundError):
+            continue
+
+        if not commit_files:
+            continue
+
+        # Count how many files in this commit are inside the project dir
+        project_prefix = rel_project + "/"
+        in_project = sum(1 for f in commit_files if f.startswith(project_prefix))
+
+        # A commit is a "project-agent" commit if more than half its files
+        # are within the project directory.  System-level commits that
+        # incidentally touch one project file (e.g. creating a manifest)
+        # are not project-agent commits.
+        if in_project < len(commit_files) / 2:
+            continue
+
+        agent_commit_count += 1
+        total_files_checked += len(commit_files)
+
+        for fpath in commit_files:
+            if not is_in_boundary(fpath):
+                violations.append(fpath)
+
+    # Deduplicate violations (same file may appear in multiple commits)
+    violations = sorted(set(violations))
+
+    if not agent_commit_count:
+        evidence.append({
+            "type": "file_timestamp",
+            "path": project_path,
+            "detail": (
+                f"Found {len(project_commits)} commit(s) touching the project "
+                f"but none are project-agent commits (all are system-level)"
+            )
+        })
+    elif violations:
         all_pass = False
         shown = violations[:20]
         evidence.append({
@@ -124,7 +194,8 @@ def main():
             "path": project_path,
             "detail": (
                 f"Found {len(violations)} file(s) committed outside project boundary "
-                f"({rel_project}/): {', '.join(shown)}"
+                f"({rel_project}/) in {agent_commit_count} project-agent commit(s): "
+                f"{', '.join(shown)}"
                 + (f" ... and {len(violations) - 20} more" if len(violations) > 20 else "")
             )
         })
@@ -133,8 +204,9 @@ def main():
             "type": "file_timestamp",
             "path": project_path,
             "detail": (
-                f"All {len(committed_files)} committed file(s) are within the project "
-                f"boundary ({rel_project}/) or allowed top-level paths"
+                f"All {total_files_checked} file(s) in {agent_commit_count} "
+                f"project-agent commit(s) are within the project boundary "
+                f"({rel_project}/) or allowed top-level paths"
             )
         })
 
