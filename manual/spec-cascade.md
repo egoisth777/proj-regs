@@ -33,7 +33,7 @@ proposal -> behavior_spec -> test_spec -> tests -> code
 **What it contains**: Formal Given/When/Then specifications for every observable behavior of the feature, including error cases and edge cases.
 
 **Format**:
-```
+```text
 ### Behavior: <short description>
 
 **Given** <precondition>
@@ -52,7 +52,7 @@ proposal -> behavior_spec -> test_spec -> tests -> code
 **What it contains**: Test specifications derived from the behavior spec. Each test spec defines the test type (unit, integration, E2E), which behavior it covers, what assertions it makes, required fixtures/mocks, and which SDET agent is responsible.
 
 **Format**:
-```
+```text
 ### Test: <behavior reference>
 
 **Type:** Unit | Integration | E2E

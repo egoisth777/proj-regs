@@ -92,7 +92,7 @@ The `<feature>` placeholder resolves to `runtime/openspec/changes/<YYYY-MM-DD-fe
 
 The `.agents` symlink at the project root points to `regs/omni-regs/ssot/blueprint/orchestrate-members/`. This provides a convenient shortcut for agents to locate their role definitions without knowing the full registry path.
 
-```
+```text
 .agents -> regs/omni-regs/ssot/blueprint/orchestrate-members/
 ```
 

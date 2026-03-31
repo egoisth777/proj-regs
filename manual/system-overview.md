@@ -13,7 +13,9 @@ The system operates on two levels:
 
 ### Orchestrator + Subagent Delegation
 
-The main agent (orchestrator) is a pure delegator. It never reads or writes project files directly. Instead, it:
+The orchestrator agent role is a pure delegator for project feature files -- it never reads or writes feature code, specs, or test files directly, delegating all such work to subagents. However, the orchestrator runtime modules (`loop.py`, `opsx.py`, `run_loop.py`) do perform direct I/O on manifest and state files (e.g., `orchestrator/manifest.json`) to manage evolution loop state.
+
+The orchestrator agent:
 
 - Communicates with the user
 - Dispatches subagents with specific roles and injected context

@@ -1,6 +1,6 @@
 # Tasks: manual/ Documentation
 
-### Task 1: Create all manual documentation files
+## Task 1: Create all manual documentation files
 
 **Assignee:** worker-1
 **File scope:**
