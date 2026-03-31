@@ -6,8 +6,6 @@ Usage:
     python -m src.cli complete 1
 """
 
-from __future__ import annotations
-
 import argparse
 import sys
 
@@ -20,7 +18,9 @@ def build_parser() -> argparse.ArgumentParser:
         prog="cli-todo",
         description="A command-line todo list application.",
     )
-    subparsers = parser.add_subparsers(dest="command", help="Available commands")
+    subparsers = parser.add_subparsers(
+        dest="command", help="Available commands"
+    )
 
     # --- add ---
     add_parser = subparsers.add_parser("add", help="Add a new task")
@@ -44,8 +44,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
 
     # --- complete ---
-    complete_parser = subparsers.add_parser("complete", help="Mark a task as completed")
-    complete_parser.add_argument("id", type=int, help="The task ID to complete")
+    complete_parser = subparsers.add_parser(
+        "complete", help="Mark a task as completed"
+    )
+    complete_parser.add_argument(
+        "id", type=int, help="The task ID to complete"
+    )
 
     return parser
 
@@ -67,7 +71,10 @@ def main(argv: list[str] | None = None) -> int:
         except ValueError as exc:
             print(f"Error: {exc}", file=sys.stderr)
             return 1
-        print(f'Task {task["id"]} added: "{task["title"]}" [priority: {task["priority"]}]')
+        print(
+            f'Task {task["id"]} added: "{task["title"]}"'
+            f' [priority: {task["priority"]}]'
+        )
         return 0
 
     if args.command == "list":

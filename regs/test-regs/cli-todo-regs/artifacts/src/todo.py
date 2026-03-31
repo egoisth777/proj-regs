@@ -4,8 +4,6 @@ Provides the Task data model and TodoStore class for managing todo items
 persisted in a local JSON file.
 """
 
-from __future__ import annotations
-
 import json
 import os
 from dataclasses import asdict, dataclass, field
@@ -22,7 +20,9 @@ class Task:
     title: str
     priority: str = "medium"
     status: str = "pending"
-    created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    created_at: str = field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
 
 
 class TodoStore:
@@ -88,7 +88,8 @@ class TodoStore:
         allowed_priorities = ("low", "medium", "high")
         if priority not in allowed_priorities:
             raise ValueError(
-                f"Invalid priority '{priority}'. Must be one of: {', '.join(allowed_priorities)}"
+                f"Invalid priority '{priority}'. Must be one of: "
+                f"{', '.join(allowed_priorities)}"
             )
 
         tasks = self._load()
@@ -110,7 +111,8 @@ class TodoStore:
         """List tasks, optionally filtered by status.
 
         Args:
-            status_filter: One of 'all', 'pending', 'completed'. Defaults to 'all'.
+            status_filter: One of 'all', 'pending', 'completed'.
+                Defaults to 'all'.
 
         Returns:
             A list of task dicts matching the filter.
@@ -121,7 +123,8 @@ class TodoStore:
         allowed_filters = ("all", "pending", "completed")
         if status_filter not in allowed_filters:
             raise ValueError(
-                f"Invalid status filter '{status_filter}'. Must be one of: {', '.join(allowed_filters)}"
+                f"Invalid status filter '{status_filter}'. Must be one of: "
+                f"{', '.join(allowed_filters)}"
             )
 
         tasks = self._load()
