@@ -1,95 +1,65 @@
-# MAS Harness
+# omni
 
-A multi-agent development harness that orchestrates AI coding agents via project registries, enforcement hooks, and a strict spec-first workflow.
+A Multi-Agent System (MAS) with self-evolution capability. omni orchestrates specialized AI agents through a structured spec-first workflow, enforcing quality via role boundaries, a spec cascade, and an automated evaluation loop that iteratively improves the system's own templates.
 
-## What is this?
+## Project Structure
 
-MAS Harness is a meta-framework for multi-agent software development. It uses:
+```
+omni/
+├── eval/          # Evaluation framework (criteria, gates, scripts, tiers, pools) — FROZEN
+├── eval-loop/     # Evolution loop engine (loop, dispatch, opsx CLI, manifest)
+├── manual/        # Comprehensive system documentation (8 pages)
+├── regs/          # Registries (omni-regs SSoT, test-regs)
+├── tpls/          # Templates (snapshots, CLI tools, hooks)
+├── docs/          # Historical planning docs and design specs
+├── .harness.json  # Harness config (registry_path, cli_path)
+├── .agents        # Symlink to agent role definitions
+└── CLAUDE.md      # MAS agent instructions
+```
 
-- **Project registries** (Obsidian vaults as Single Source of Truth) to track specs, plans, and agent state
-- **Enforcement hooks** (pre-tool-use / post-tool-use) that block agents from writing code before specs are complete, and from touching files outside their role's scope
-- **The OpenSpec workflow** — a spec cascade that forces requirements → behaviors → specs → tests → code ordering
-- **12 agent role definitions** with distinct responsibilities and scope boundaries
+## Documentation
+
+The `manual/` directory contains the full system documentation. Start with the system overview for the big picture, then follow links to specific topics.
+
+| Page | Description |
+|------|-------------|
+| [System Overview](manual/system-overview.md) | Architecture, delegation model, and core concepts |
+| [SSoT Registries](manual/registries.md) | Single Source of Truth: blueprint vs runtime, context map, harness config |
+| [Templates](manual/templates.md) | The `tpls/` subsystem: snapshots, CLI tools, hooks, snapshot management |
+| [Evaluation Framework](manual/eval-framework.md) | Criteria, tier progression, check scripts, gates, FROZEN.lock integrity |
+| [Evolution Loop](manual/evolution-loop.md) | The 5-phase cycle: prepare, mutate, execute, verify, decide |
+| [Eval-Loop Guide](manual/eval-loop-guide.md) | Using `opsx.py` CLI commands and running the evolution loop |
+| [Agent Roles](manual/agent-roles.md) | All 12 agent roles: orchestrator, team-lead, worker, spec writers, SDETs, and more |
+| [Spec Cascade](manual/spec-cascade.md) | The mandatory workflow: proposal, behavior spec, test spec, tests, code |
 
 ## Quick Start
 
-### Onboard a new project
+Bootstrap a new project with a single command:
 
 ```bash
-# One command to bootstrap
-python harness-cli/setup/bootstrap.py \
+python tpls/snapshots/candidate-0/cli/setup/bootstrap.py \
   --name my-project \
-  --project ~/repos/my-project
-
-# Then start Claude Code in the project
-cd ~/repos/my-project && claude
+  --project ~/repos/my-project \
+  --registry-dir ./regs
 ```
 
-This creates a project registry (copied from `mas-harness/`), installs hooks into the target project, and wires up the context injector.
+| Argument | Description |
+|----------|-------------|
+| `--name` | Registry name (used as the folder name, suffixed with `-regs`) |
+| `--project` | Path to the target project repo (must be an existing git repository) |
+| `--registry-dir` | Where to create the registry (default: `regs/` at the repo root) |
 
-## Architecture
+This creates a project registry under `regs/<name>-regs/` (with `ssot/` and `cli/` subdirectories), installs hooks into the target project, and wires up the harness config.
 
-```
-proj-regs/
-├── mas-harness/          # Template registry (Obsidian vault)
-│   ├── blueprint/        # Static — frozen during sprints
-│   └── runtime/          # Dynamic — updated during agent work
-├── harness-cli/          # Executable layer
-│   ├── hooks/            # Enforcement hooks
-│   ├── context/          # Context injection
-│   └── setup/            # Bootstrap + init tooling
-├── mas-harness-regs/     # Registry for this project's own development
-├── reg-tpls/             # Legacy templates (superseded by mas-harness/)
-└── docs/                 # Specs and plans
-```
+## Key Concepts
 
-### `mas-harness/`
+**Sprint** -- One feature's complete lifecycle through the spec cascade (proposal through merge). Not time-boxed.
 
-The template Obsidian vault. Contains:
+**Milestone** -- A collection of completed sprints. Blueprint documents evolve between milestones, not within them.
 
-- `blueprint/` — Static documents (architecture, role definitions, conventions). Frozen during a sprint; evolves only between milestones.
-- `runtime/` — Dynamic documents (active sprint state, agent assignments, feature tracking).
-- 12 agent role definitions with scope rules and behavioral contracts.
+**Blueprint vs Runtime** -- Blueprint is frozen during a sprint. Agents read it but cannot modify it. Runtime documents are the live working state.
 
-New projects get a copy of this vault as their registry.
-
-### `harness-cli/`
-
-The executable layer. All tooling lives here.
-
-| Path | Purpose |
-|------|---------|
-| `hooks/path_validator.py` | Blocks writes outside a role's allowed file scope |
-| `hooks/spec_cascade_gate.py` | Blocks code from being written before specs are complete |
-| `hooks/post_pr_wait.ts` | Polls GitHub PR for CI status and required reviews |
-| `context/inject.py` | Assembles minimum-context prompts per role |
-| `setup/bootstrap.py` | One-command project onboarding |
-| `setup/init_project.py` | Project initialization (used by bootstrap) |
-
-## How it Works
-
-### The Spec Cascade
-
-Every feature must travel through this chain before a line of implementation code is written:
-
-```
-Requirements
-    → Behaviors
-    → Behavior Specs (Given / When / Then)
-    → Test Specs
-    → Tests
-    → Code
-```
-
-`spec_cascade_gate.py` enforces this order. If the current stage is incomplete, the hook blocks the next stage from starting. Agents cannot skip ahead.
-
-### Hook enforcement
-
-`path_validator.py` reads the active role from the branch name (`feat/<feature>/<role>[-<instance>]`) and rejects any write to a path outside that role's declared scope. This prevents roles from accidentally (or deliberately) modifying files they do not own.
-
-### Context injection
-
-`inject.py` reads the registry and assembles a minimal, role-scoped prompt for a subagent. Only the documents relevant to that role and the current feature are included — avoiding context bloat across large registries.
+**Branch convention** -- `feat/<feature>/<role>[-<instance>]`. Hooks read the branch name to determine role scope. Example: `feat/auth/worker-1`.
 
 ## Agent Roles
 
@@ -97,9 +67,9 @@ Requirements
 
 | Role | Responsibility |
 |------|---------------|
-| `orchestrator` | Pure delegator — assigns work, never writes code |
-| `sonders` | Creative architect — explores solution space, challenges assumptions |
-| `negator` | Red-team critic — finds flaws before they become bugs |
+| `orchestrator` | Pure delegator -- assigns work, never writes code |
+| `sonders` | Creative architect -- explores solution space, challenges assumptions |
+| `negator` | Red-team critic -- finds flaws before they become bugs |
 | `behavior-spec-writer` | Writes Given/When/Then behavior specs |
 | `test-spec-writer` | Writes test specs from behavior specs |
 | `team-lead` | Coordinates implementation within a feature |
@@ -110,71 +80,17 @@ Requirements
 | `auditor` | Reviews code and specs for compliance |
 | `regression-runner` | Runs regression suites, reports results |
 
-## Key Concepts
-
-**Sprint** — One feature's complete lifecycle (requirements through deployed code). Not time-boxed.
-
-**Milestone** — A collection of sprints. Blueprint documents evolve between milestones, not within them.
-
-**Blueprint vs. Runtime** — Blueprint is frozen during a sprint. Agents read it but cannot modify it. Runtime documents are the live working state.
-
-**No CLAUDE.md in registries** — Registries do not contain `CLAUDE.md` or `AGENTS.md`. This prevents the registry content from being auto-loaded as agent instructions, which would pollute the context of every agent that opens the project.
-
-**Branch convention** — `feat/<feature>/<role>[-<instance>]`. The hook reads this to determine scope. Example: `feat/auth/worker-1`.
-
-## CLI Reference
-
-### `bootstrap.py`
-
-Creates a registry and initializes a project in one step.
-
-```
-python harness-cli/setup/bootstrap.py \
-  --name <name> \
-  --project <path> \
-  [--registry-dir <path>]
-```
-
-| Argument | Description |
-|----------|-------------|
-| `--name` | Registry name (used as the vault directory name) |
-| `--project` | Absolute path to the target project |
-| `--registry-dir` | Where to create the registry (default: current dir) |
-
-### `init_project.py`
-
-Initializes an existing project against an existing registry.
-
-```
-python harness-cli/setup/init_project.py \
-  --project <path> \
-  --registry <path>
-```
-
-### `inject.py`
-
-Assembles a role-scoped context prompt for a subagent.
-
-```
-python harness-cli/context/inject.py \
-  --role <role> \
-  [--feature <feature>] \
-  [--project <path>] \
-  [--format json|text]
-```
+See [Agent Roles](manual/agent-roles.md) for full details on scope boundaries and behavioral contracts.
 
 ## Testing
 
 ```bash
-cd harness-cli
+# Evolution loop tests
+python -m pytest eval-loop/tests/ -v
 
-# Python tests (128 tests)
-python -m pytest -v
+# Eval gate tests
+python -m pytest eval/gates/tests/ -v
 
-# TypeScript tests (8 tests)
-npx vitest run
+# CLI / harness tests (within the active snapshot)
+python -m pytest tpls/snapshots/candidate-0/cli/tests/ -v
 ```
-
-## Specs and Plans
-
-Located in `docs/superpowers/specs/` and `docs/superpowers/plans/`.
