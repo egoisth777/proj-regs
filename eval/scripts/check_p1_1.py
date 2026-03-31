@@ -69,7 +69,11 @@ def main():
     project_path = os.path.abspath(sys.argv[1])
     repo_root = find_repo_root(project_path)
 
-    changes_dir = os.path.join(project_path, "runtime", "openspec", "changes")
+    # Resolve spec root: reg_root/ssot/ if it exists, else reg_root
+    _ssot = os.path.join(project_path, "ssot")
+    spec_root = _ssot if os.path.isdir(_ssot) else project_path
+
+    changes_dir = os.path.join(spec_root, "runtime", "openspec", "changes")
     evidence = []
     all_pass = True
 
