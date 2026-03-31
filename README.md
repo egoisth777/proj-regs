@@ -47,9 +47,9 @@ python tpls/snapshots/candidate-0/cli/setup/bootstrap.py \
 |----------|-------------|
 | `--name` | Registry name (used as the folder name, suffixed with `-regs`) |
 | `--project` | Path to the target project repo (must be an existing git repository) |
-| `--registry-dir` | Where to create the registry (default: `regs/` at the repo root) |
+| `--registry-dir` | Where to create the registry (default: `proj-regs/`) |
 
-This creates a project registry under `regs/<name>-regs/` (with `ssot/` and `cli/` subdirectories), installs hooks into the target project, and wires up the harness config.
+This creates a project registry under `<registry-dir>/<name>-regs/` (with `ssot/` and `cli/` subdirectories), installs hooks into the target project, and wires up the harness config.
 
 ## Key Concepts
 
