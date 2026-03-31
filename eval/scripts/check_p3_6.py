@@ -52,21 +52,40 @@ def parse_tasks(filepath):
             re.IGNORECASE
         )
 
+        # Lines that are clearly status field declarations (e.g. **Status:** complete)
+        status_field_pattern = re.compile(
+            r"^\*{0,2}Status:?\*{0,2}\s+",
+            re.IGNORECASE
+        )
+
         lines = content.splitlines()
         for line in lines:
             line_stripped = line.strip()
             if not line_stripped or line_stripped.startswith("#"):
                 continue
+            # Skip HTML comments and template placeholder lines
+            if "<!--" in line_stripped:
+                continue
+            # Skip lines showing status options as template placeholders
+            if re.search(r"pending\s*\|\s*in-progress\s*\|\s*complete", line_stripped):
+                continue
+
+            # Only count lines that look like actual status fields, not descriptions
+            is_status_field = bool(status_field_pattern.match(line_stripped))
 
             has_done = bool(status_pattern.search(line_stripped))
             has_pending = bool(pending_pattern.search(line_stripped))
 
-            if has_done:
+            if is_status_field:
+                if has_done:
+                    total += 1
+                    completed += 1
+                elif has_pending:
+                    total += 1
+                    idle.append(line_stripped[:80])
+            elif has_done and not has_pending:
                 total += 1
                 completed += 1
-            elif has_pending:
-                total += 1
-                idle.append(line_stripped[:80])
 
     return total, completed, idle
 

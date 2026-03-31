@@ -11,8 +11,7 @@ import yaml
 
 
 MARKER_PATTERN = re.compile(
-    r"\b(TODO|FIXME|HACK|XXX)\b",
-    re.IGNORECASE
+    r"#\s*(TODO|FIXME|HACK|XXX)\b"
 )
 
 

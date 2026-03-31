@@ -17,13 +17,18 @@ def collect_paths_from_obj(obj, paths=None):
         paths = set()
 
     if isinstance(obj, str):
-        # Heuristic: strings containing '/' or ending with known extensions are paths
-        if "/" in obj or obj.endswith((".py", ".md", ".json", ".yaml", ".yml", ".toml", ".txt")):
+        # Heuristic: strings containing '/' are paths (directory structure).
+        # Bare filenames (e.g. "proposal.md") without a directory separator are
+        # typically per-feature doc references that resolve relative to each
+        # feature directory, not standalone paths — skip them.
+        # Also skip prose/description strings: real paths don't contain spaces
+        # around non-path content (a sentence with spaces is not a path).
+        if "/" in obj and " " not in obj:
             paths.add(obj)
     elif isinstance(obj, dict):
         for k, v in obj.items():
             # Keys might also be paths
-            if isinstance(k, str) and ("/" in k or k.endswith((".py", ".md", ".json", ".yaml"))):
+            if isinstance(k, str) and "/" in k:
                 paths.add(k)
             collect_paths_from_obj(v, paths)
     elif isinstance(obj, list):

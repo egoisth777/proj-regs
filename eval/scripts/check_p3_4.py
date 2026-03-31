@@ -39,11 +39,20 @@ def search_file_for_blockers(filepath):
     blocker_mentions = []
     resolution_mentions = []
 
+    # Patterns that indicate NO blockers (should not count as blocker mentions)
+    no_blocker_patterns = re.compile(
+        r"(no\s+blockers?|zero\s+blockers?|blockers?:\s*none|no\s+blockers?\s+encountered)",
+        re.IGNORECASE
+    )
+
     for kw in BLOCKER_KEYWORDS:
         for m in re.finditer(re.escape(kw), content_lower):
             start = max(0, m.start() - 40)
             end = min(len(content), m.end() + 40)
             context = content[start:end].replace("\n", " ").strip()
+            # Skip if the context indicates no blockers exist
+            if no_blocker_patterns.search(context):
+                continue
             blocker_mentions.append(context)
 
     for kw in RESOLUTION_KEYWORDS:
