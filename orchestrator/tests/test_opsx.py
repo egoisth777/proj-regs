@@ -9,6 +9,7 @@ from opsx import (
     cmd_status,
     cmd_tier,
     cmd_new_feature,
+    cmd_reset_test,
     _next_feature_number,
 )
 
@@ -90,3 +91,9 @@ class TestCmdNewFeature:
             template_dir=template_dir,
         )
         assert "feat-002-list-tasks" in result
+
+
+class TestCmdResetTest:
+    def test_missing_project_returns_error(self, tmp_path):
+        result = cmd_reset_test("nonexistent", tmp_path)
+        assert "not found" in result
