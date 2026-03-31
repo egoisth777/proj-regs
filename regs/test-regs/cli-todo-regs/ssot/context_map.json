@@ -1,0 +1,107 @@
+{
+  "version": "2.0",
+  "description": "Defines context rules for the Orchestrator to inject into 0-state subagents upon spawning. Feature paths resolve to runtime/openspec/changes/<feature-name>/",
+  "features": [
+    "runtime/openspec/changes/feat-001-add-task",
+    "runtime/openspec/changes/feat-002-list-tasks",
+    "runtime/openspec/changes/feat-003-complete-task"
+  ],
+  "agent_role_context": {
+    "orchestrator": {
+      "required_docs": [
+        "00-Project-Memory.md",
+        "runtime/active_sprint.md",
+        "runtime/milestones.md"
+      ]
+    },
+    "sonders": {
+      "required_docs": [
+        "00-Project-Memory.md",
+        "blueprint/planning/roadmap.md",
+        "blueprint/design/architecture_overview.md"
+      ]
+    },
+    "negator": {
+      "required_docs": [
+        "00-Project-Memory.md",
+        "blueprint/design/architecture_overview.md",
+        "blueprint/design/design_principles.md"
+      ]
+    },
+    "behavior-spec-writer": {
+      "required_docs": [
+        "00-Project-Memory.md",
+        "blueprint/design/design_principles.md"
+      ],
+      "per_feature_docs": [
+        "proposal.md"
+      ]
+    },
+    "test-spec-writer": {
+      "required_docs": [
+        "00-Project-Memory.md"
+      ],
+      "per_feature_docs": [
+        "behavior_spec.md"
+      ]
+    },
+    "team-lead": {
+      "required_docs": [
+        "00-Project-Memory.md",
+        "blueprint/engineering/dev_workflow.md"
+      ],
+      "per_feature_docs": [
+        "proposal.md",
+        "tasks.md"
+      ]
+    },
+    "worker": {
+      "required_docs": [
+        "blueprint/engineering/dev_workflow.md"
+      ],
+      "per_feature_docs": [
+        "tasks.md"
+      ]
+    },
+    "sdet-unit": {
+      "required_docs": [
+        "blueprint/engineering/testing_strategy.md"
+      ],
+      "per_feature_docs": [
+        "test_spec.md"
+      ]
+    },
+    "sdet-integration": {
+      "required_docs": [
+        "blueprint/engineering/testing_strategy.md",
+        "blueprint/design/architecture_overview.md"
+      ],
+      "per_feature_docs": [
+        "test_spec.md"
+      ]
+    },
+    "sdet-e2e": {
+      "required_docs": [
+        "blueprint/engineering/testing_strategy.md"
+      ],
+      "per_feature_docs": [
+        "behavior_spec.md"
+      ]
+    },
+    "auditor": {
+      "required_docs": [
+        "blueprint/design/architecture_overview.md",
+        "blueprint/design/design_principles.md"
+      ],
+      "per_feature_docs": [
+        "proposal.md"
+      ]
+    },
+    "regression-runner": {
+      "required_docs": [
+        "blueprint/engineering/testing_strategy.md"
+      ]
+    }
+  },
+  "path_based_rules": []
+}

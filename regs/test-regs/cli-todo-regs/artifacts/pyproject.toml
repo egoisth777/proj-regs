@@ -1,0 +1,9 @@
+[project]
+name = "cli-todo"
+version = "0.1.0"
+description = "A command-line todo list application"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

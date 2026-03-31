@@ -87,6 +87,47 @@ def cmd_new_feature(
     return f"Created {folder_name}"
 
 
+def cmd_reset_test(name: str, project_root: Path) -> str:
+    """Reset a test project to its post-development baseline state."""
+    import subprocess
+
+    tag = f"test-baseline/{name}"
+    project_dir = project_root / "regs" / "test-regs" / f"{name}-regs"
+
+    if not project_dir.exists():
+        return f"Error: project directory not found: {project_dir}"
+
+    # Check tag exists
+    result = subprocess.run(
+        ["git", "tag", "-l", tag],
+        capture_output=True, text=True, cwd=str(project_root)
+    )
+    if not result.stdout.strip():
+        return f"Error: baseline tag '{tag}' not found. Create it with: git tag {tag} <commit-sha>"
+
+    # Checkout tagged version of test project files
+    subprocess.run(
+        ["git", "checkout", tag, "--", str(project_dir.relative_to(project_root))],
+        cwd=str(project_root), check=True
+    )
+
+    # Remove untracked files (evidence reports, pycache, etc.)
+    for pattern in ["evidence-report.yaml", "__pycache__", ".pytest_cache"]:
+        for match in project_dir.rglob(pattern):
+            if match.is_file():
+                match.unlink()
+            elif match.is_dir():
+                shutil.rmtree(str(match))
+
+    # Unstage the checkout (we want it as working tree state, not staged)
+    subprocess.run(
+        ["git", "reset", "HEAD", "--", str(project_dir.relative_to(project_root))],
+        cwd=str(project_root), capture_output=True
+    )
+
+    return f"Reset {name} test project to baseline (tag: {tag})"
+
+
 def main():
     parser = argparse.ArgumentParser(description="omni evolution loop operations")
     sub = parser.add_subparsers(dest="command")
@@ -107,6 +148,9 @@ def main():
     p_rb.add_argument("--manifest", default="orchestrator/manifest.json")
     p_rb.add_argument("--snapshots-dir", default="tpls/snapshots")
 
+    p_reset = sub.add_parser("reset-test", help="reset test project to baseline")
+    p_reset.add_argument("name", help="test project name (e.g. cli-todo)")
+
     args = parser.parse_args()
 
     if args.command == "status":
@@ -122,6 +166,8 @@ def main():
         from hooks.utils.snapshot_manager import rollback_to
         rollback_to(args.candidate_id, args.snapshots_dir, args.manifest)
         print(f"Rolled back to {args.candidate_id}")
+    elif args.command == "reset-test":
+        print(cmd_reset_test(args.name, Path(".")))
     else:
         parser.print_help()
 
