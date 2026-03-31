@@ -76,4 +76,4 @@ The `tpls/sys/` directory contains templates for project structure:
 | `tpl-proj/` | Project structure templates |
 | `tpl-research/` | Research document templates |
 
-These templates are used by `init_project.py` (in `tpls/cli/setup/`) to scaffold new projects that follow the omni conventions.
+These templates are used by `bootstrap.py` (in `tpls/cli/setup/`) to create a new project registry and initialize a project end-to-end. The companion script `init_project.py` handles a narrower task: installing harness config and hooks into an existing repo that already has a registry.

@@ -123,17 +123,19 @@ Reviews PRs against architecture and OpenSpec. Performs architectural review onl
 
 ## Context Injection Summary
 
+> **Note:** All paths below are relative to the SSoT root (`regs/<project>-regs/ssot/`). `<feature>` expands to `runtime/openspec/changes/<YYYY-MM-DD-feature>/`. These values match the `required_docs` strings in `context_map.json`.
+
 | Role | Required Documents |
 |---|---|
-| orchestrator | 00-Project-Memory.md, active_sprint.md, milestones.md |
-| sonders | 00-Project-Memory.md, roadmap.md, architecture_overview.md |
-| negator | 00-Project-Memory.md, architecture_overview.md, design_principles.md |
-| behavior-spec-writer | 00-Project-Memory.md, design_principles.md, `<feature>/proposal.md` |
-| test-spec-writer | 00-Project-Memory.md, `<feature>/behavior_spec.md` |
-| team-lead | 00-Project-Memory.md, dev_workflow.md, `<feature>/proposal.md`, `<feature>/tasks.md` |
-| worker | dev_workflow.md, `<feature>/tasks.md` |
-| sdet-unit | testing_strategy.md, `<feature>/test_spec.md` |
-| sdet-integration | testing_strategy.md, architecture_overview.md, `<feature>/test_spec.md` |
-| sdet-e2e | testing_strategy.md, `<feature>/behavior_spec.md` |
-| auditor | architecture_overview.md, design_principles.md, `<feature>/proposal.md` |
-| regression-runner | testing_strategy.md |
+| orchestrator | `00-Project-Memory.md`, `runtime/active_sprint.md`, `runtime/milestones.md` |
+| sonders | `00-Project-Memory.md`, `blueprint/planning/roadmap.md`, `blueprint/design/architecture_overview.md` |
+| negator | `00-Project-Memory.md`, `blueprint/design/architecture_overview.md`, `blueprint/design/design_principles.md` |
+| behavior-spec-writer | `00-Project-Memory.md`, `blueprint/design/design_principles.md`, `<feature>/proposal.md` |
+| test-spec-writer | `00-Project-Memory.md`, `<feature>/behavior_spec.md` |
+| team-lead | `00-Project-Memory.md`, `blueprint/engineering/dev_workflow.md`, `<feature>/proposal.md`, `<feature>/tasks.md` |
+| worker | `blueprint/engineering/dev_workflow.md`, `<feature>/tasks.md` |
+| sdet-unit | `blueprint/engineering/testing_strategy.md`, `<feature>/test_spec.md` |
+| sdet-integration | `blueprint/engineering/testing_strategy.md`, `blueprint/design/architecture_overview.md`, `<feature>/test_spec.md` |
+| sdet-e2e | `blueprint/engineering/testing_strategy.md`, `<feature>/behavior_spec.md` |
+| auditor | `blueprint/design/architecture_overview.md`, `blueprint/design/design_principles.md`, `<feature>/proposal.md` |
+| regression-runner | `blueprint/engineering/testing_strategy.md` |

@@ -75,7 +75,7 @@ Unlocked when seed is at 100% for 3 consecutive evaluation runs. Adds:
 
 ### tier-3 (21 questions)
 
-Unlocked when tier-2 is at 90%+ for 3 consecutive runs. The full question set:
+Unlocked when tier-2 is at 100% for 3 consecutive runs. The full question set:
 - Substantive spec content (p1.5)
 - Cross-boundary violations (p2.6)
 - Advanced orchestration (p3.4, p3.5, p3.6)

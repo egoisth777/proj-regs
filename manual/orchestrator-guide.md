@@ -68,12 +68,14 @@ Creates a folder like `feat-001-add-task/` with files copied from the template d
 Run a single phase of the evolution loop.
 
 ```bash
-python orchestrator/opsx.py phase PHASE_NAME [--manifest PATH] [--project PROJECT]
+python orchestrator/opsx.py phase PHASE_NAME [--project PROJECT]
 ```
 
 Valid phase names: `prepare`, `mutate`, `execute`, `verify`, `decide`.
 
 The `--project` flag specifies the test project name (default: `cli-todo`). The test project is located at `regs/test-regs/<project>-regs/`.
+
+> **Note:** The `phase` subcommand accepts `--manifest` in its argument parser but does not forward it to `run_loop.py`. The manifest path is always resolved by `run_loop.py` internally.
 
 Each phase outputs JSON describing its result.
 

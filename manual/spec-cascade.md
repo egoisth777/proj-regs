@@ -24,6 +24,8 @@ proposal -> behavior_spec -> test_spec -> tests -> code
 
 **Location**: `runtime/openspec/changes/<feature>/proposal.md`
 
+> **Note:** All `runtime/...` paths in this document are relative to the SSoT root (`regs/<project>-regs/ssot/`).
+
 **Gate**: The proposal must be approved by both Sonders and Negator (with the human as tie-breaker) before proceeding.
 
 ### Step 2: Behavior Spec
