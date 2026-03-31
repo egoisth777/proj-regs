@@ -4,7 +4,9 @@ This document indexes all `IR-xxx` records within the project. It serves as a si
 
 | IR Code  | Short Description | Corresponds To (File/Module) | Date Added |
 | :------- | :---------------- | :--------------------------- | :--------- |
-|          |                   |                              |            |
+| IR-001   | feat-001-add-task: Task model and add functionality | `artifacts/src/todo.py`, `artifacts/src/cli.py` | 2026-03-30 |
+| IR-002   | feat-002-list-tasks: List and filter tasks | `artifacts/src/todo.py`, `artifacts/src/cli.py` | 2026-03-30 |
+| IR-003   | feat-003-complete-task: Mark tasks as completed | `artifacts/src/todo.py`, `artifacts/src/cli.py` | 2026-03-30 |
 
 ## How to use this index
 

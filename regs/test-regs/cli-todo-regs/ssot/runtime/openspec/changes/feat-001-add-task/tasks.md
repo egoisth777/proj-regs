@@ -13,7 +13,7 @@
 
 **Assignee:** @Pool-E
 **Worktree:** main
-**Status:** pending
+**Status:** complete
 
 **Description:**
 Create the Task dataclass with fields: id (int), title (str), priority (str),
@@ -32,7 +32,7 @@ status (str), created_at (str). Implement the TodoStore class with:
 
 **Assignee:** @Pool-E
 **Worktree:** main
-**Status:** pending
+**Status:** complete
 
 **Description:**
 Create the CLI entry point using argparse with an `add` subcommand.
@@ -52,7 +52,7 @@ Create the CLI entry point using argparse with an `add` subcommand.
 
 **Assignee:** @Pool-E
 **Worktree:** main
-**Status:** pending
+**Status:** complete
 
 **Description:**
 Write pytest unit tests covering: add with default priority, add with explicit
@@ -68,7 +68,7 @@ title rejection, file auto-creation, persistence format.
 
 **Assignee:** @Pool-E
 **Worktree:** main
-**Status:** pending
+**Status:** complete
 
 **Description:**
 Write pytest integration tests that invoke the CLI as a subprocess and verify
@@ -83,7 +83,7 @@ stdout, stderr, exit codes, and file contents for add operations.
 
 **Assignee:** @Pool-E
 **Worktree:** main
-**Status:** pending
+**Status:** complete
 
 **Description:**
 Create project configuration with pytest settings, project metadata, and
