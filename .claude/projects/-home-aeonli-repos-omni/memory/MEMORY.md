@@ -1,0 +1,2 @@
+- [Evolution loop converged](project_evolution_loop.md) — 48/48 all tiers, first full convergence achieved 2026-03-30
+- [User prefers autonomous building](feedback_autonomous.md) — Don't ask permission, continuously build, use parallel subagents
