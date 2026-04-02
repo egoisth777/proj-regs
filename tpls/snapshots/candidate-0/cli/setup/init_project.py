@@ -78,11 +78,13 @@ def configure_hooks(project: Path):
     hooks_config = {
         "hooks": {
             "PreToolUse": [
-                {"matcher": "Write|Edit", "command": f"python {cli_path}/hooks/path_validator.py"},
-                {"matcher": "Write|Edit", "command": f"python {cli_path}/hooks/spec_cascade_gate.py"},
-            ],
-            "PostToolUse": [
-                {"matcher": "Bash", "command": f"node {cli_path}/dist/hooks/post_pr_wait.js"},
+                {
+                    "matcher": "Write|Edit",
+                    "hooks": [
+                        {"type": "command", "command": f"PYTHONPATH={cli_path} python {cli_path}/hooks/path_validator.py"},
+                        {"type": "command", "command": f"PYTHONPATH={cli_path} python {cli_path}/hooks/spec_cascade_gate.py"},
+                    ],
+                },
             ],
         }
     }
