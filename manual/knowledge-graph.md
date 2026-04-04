@@ -11,7 +11,7 @@ The graph covers two documentation scopes:
 
 ## Where It Lives
 
-The graph is stored in `.understand/` at the repo root. This directory is gitignored — it is a generated artifact, not source content. Each machine maintains its own local copy.
+The graph is stored in `.understand-anything/` at the repo root. This directory is gitignored — it is a generated artifact, not source content. Each machine maintains its own local copy.
 
 ## How to Generate or Regenerate
 
@@ -39,7 +39,7 @@ git config core.hooksPath .githooks
 
 `CLAUDE.md` instructs Claude to invoke `understand-chat` automatically when answering questions about the harness system. No manual skill invocation is needed — just ask the question.
 
-If `.understand/` does not exist (e.g., fresh clone), Claude will prompt you to run the `understand` skill first.
+If `.understand-anything/` does not exist (e.g., fresh clone), Claude will prompt you to run the `understand` skill first.
 
 ### Orchestrator (Mediated Retrieval)
 

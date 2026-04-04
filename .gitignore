@@ -5,4 +5,4 @@ dist/
 node_modules/
 .pytest_cache/
 tpls/snapshots/workspace/
-.understand/
+.understand-anything/

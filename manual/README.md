@@ -28,5 +28,5 @@ This manual covers every major subsystem. Start with the system overview for the
 | `docs/` | Planning documents and design specs (e.g., `docs/superpowers/`) |
 | `.agents` | Symlink to agent role definitions |
 | `CLAUDE.md` | Agent instructions for the MAS |
-| `.understand/` | Knowledge graph (generated, gitignored) |
+| `.understand-anything/` | Knowledge graph (generated, gitignored) |
 | `.githooks/` | Git hooks (post-commit graph regeneration) |

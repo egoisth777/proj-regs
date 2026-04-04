@@ -47,4 +47,4 @@ A knowledge graph indexes the harness documentation (`manual/` + `regs/omni-regs
 
 - When answering questions about how the harness system works (registries, spec cascade, agent roles, eval framework, evolution loop, context injection, blueprints, or any MAS workflow), invoke `understand-chat` to query the knowledge graph before responding.
 - Do not rely on training data or assumptions about the system — always query the graph first.
-- If `.understand/` does not exist (e.g., fresh clone), run the `understand` skill on `manual/` and `regs/omni-regs/ssot/` to generate it before querying.
+- If `.understand-anything/` does not exist (e.g., fresh clone), run the `understand` skill on `manual/` and `regs/omni-regs/ssot/` to generate it before querying.
