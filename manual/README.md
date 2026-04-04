@@ -14,6 +14,7 @@ This manual covers every major subsystem. Start with the system overview for the
 6. [Eval-Loop Guide](eval-loop-guide.md) -- Using `opsx.py` CLI commands and running the evolution loop.
 7. [Agent Roles](agent-roles.md) -- All 12 agent roles: orchestrator, team-lead, worker, spec writers, SDETs, and more.
 8. [Spec Cascade](spec-cascade.md) -- The mandatory workflow: proposal, behavior spec, test spec, tests, code.
+9. [Knowledge Graph](knowledge-graph.md) -- Retrieval-augmented documentation: generation, auto-regeneration, and agent integration.
 
 ## Quick Reference
 
@@ -27,3 +28,5 @@ This manual covers every major subsystem. Start with the system overview for the
 | `docs/` | Planning documents and design specs (e.g., `docs/superpowers/`) |
 | `.agents` | Symlink to agent role definitions |
 | `CLAUDE.md` | Agent instructions for the MAS |
+| `.understand-anything/` | Knowledge graph (generated, gitignored) |
+| `.githooks/` | Git hooks (post-commit graph regeneration) |

@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Post-commit hook: regenerate Understand-Anything knowledge graph
+# when harness documentation changes.
+
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+# Check if the commit touched any files in the documented scope
+CHANGED=$(git diff-tree --no-commit-id --name-only -r HEAD -- \
+    "manual/" \
+    "regs/omni-regs/ssot/" \
+    2>/dev/null || true)
+
+if [ -z "$CHANGED" ]; then
+    exit 0
+fi
+
+echo "[post-commit] Harness docs changed — regenerating knowledge graph..."
+
+# Run the understand skill via claude CLI
+# This blocks until regeneration completes
+(cd "$REPO_ROOT" && claude --print "Run the understand skill to regenerate the knowledge graph. Target: manual/ and regs/omni-regs/ssot/. Output to .understand-anything/ at repo root. Do not ask questions, just run it." \
+    2>&1) || {
+        echo "[post-commit] Warning: knowledge graph regeneration failed. Run 'understand' manually."
+        exit 0
+    }
+
+echo "[post-commit] Knowledge graph regenerated."

@@ -40,3 +40,11 @@ Examples: `feat/auth/worker-1`, `feat/auth/sdet-unit`, `feat/auth/team-lead`
 - **Never write or review code** from the main agent — delegate to subagents
 - **Never skip the spec cascade** — all code must have completed specs first
 - **Never write to paths outside your role's scope** — hooks enforce this
+
+## Harness Knowledge Graph
+
+A knowledge graph indexes the harness documentation (`manual/` + `regs/omni-regs/ssot/`).
+
+- When answering questions about how the harness system works (registries, spec cascade, agent roles, eval framework, evolution loop, context injection, blueprints, or any MAS workflow), invoke `understand-chat` to query the knowledge graph before responding.
+- Do not rely on training data or assumptions about the system — always query the graph first.
+- If `.understand-anything/` does not exist (e.g., fresh clone), run the `understand` skill on `manual/` and `regs/omni-regs/ssot/` to generate it before querying.
