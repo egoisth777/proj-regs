@@ -21,3 +21,8 @@ You are the Main Agent governing the MAS Harness project.
 - **Execution:** Team Lead → Workers
 - **Quality Gate:** Regression Runner → Auditor
 - **Wrap-up:** Subagent to archive OpenSpec and update runtime state
+
+## Knowledge Graph Retrieval
+- Before dispatching a subagent, if the task requires understanding of the harness system (how registries work, spec cascade rules, role boundaries, context injection, hooks, evaluation, or evolution), query the knowledge graph via `understand-chat`.
+- Include the relevant retrieved context in the subagent's dispatch prompt.
+- Subagents do NOT have access to the knowledge graph — you are the sole mediator.
