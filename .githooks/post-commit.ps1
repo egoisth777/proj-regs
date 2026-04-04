@@ -18,10 +18,12 @@ if (-not $changed) {
 Write-Host "[post-commit] Harness docs changed - regenerating knowledge graph..."
 
 try {
-    claude --print "Run the understand skill to regenerate the knowledge graph. Target: manual/ and regs/omni-regs/ssot/. Output to .understand/ at repo root. Do not ask questions, just run it." `
-        --cwd $repoRoot
+    Push-Location $repoRoot
+    claude --print "Run the understand skill to regenerate the knowledge graph. Target: manual/ and regs/omni-regs/ssot/. Output to .understand-anything/ at repo root. Do not ask questions, just run it."
+    Pop-Location
     Write-Host "[post-commit] Knowledge graph regenerated."
 } catch {
+    Pop-Location
     Write-Host "[post-commit] Warning: knowledge graph regeneration failed. Run 'understand' manually."
     exit 0
 }
