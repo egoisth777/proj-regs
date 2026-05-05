@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Obsidian — commit shared vault config but exclude per-user workspace state
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/workspace-tablet.json
+.obsidian/app.lock
+.obsidian/cache/

@@ -1,0 +1,6 @@
+{
+  "project_name": "My Project",
+  "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '-').replace('_', '-') }}",
+  "ssot_repo_url": "git@github.com:USER/PROJECT-inst.git",
+  "_copy_without_render": ["{{cookiecutter.project_slug}}/.omne/INDEX.yaml"]
+}
